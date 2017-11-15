@@ -1,0 +1,22 @@
+# depslib dependency file v1.0
+1510588666 source:d:\grafika komputer\tugasshading\main.cpp
+	<iostream>
+	<GL/glut.h>
+	"Camera.h"
+	<math.h>
+
+1510562824 d:\grafika komputer\tugasshading\camera.h
+	<windows.h>
+	<gl\Gl.h>
+	<gl\glu.h>
+	"Vector3.h"
+
+1510562880 d:\grafika komputer\tugasshading\vector3.h
+	<math.h>
+
+1510563299 source:d:\grafika komputer\tugasshading\camera.cpp
+	<math.h>
+	<windows.h>
+	<gl/Gl.h>
+	"Camera.h"
+
