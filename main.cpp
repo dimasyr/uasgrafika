@@ -5,7 +5,7 @@
 #define PI 3.14159265358979323846
 using namespace std;
 //skala scale tiap kotak =2.5
-//skala translate tiap kotak x=250, y dan z =1
+//skala translate tiap kotak x=5, y dan z =1
 
 //float posCamx=0, posCamy=0, posCamz=5, lookCamx=0, lookCamy=0, lookCamz=0;
 GLfloat xRotated, yRotated, zRotated;
@@ -274,33 +274,100 @@ void garis2leftright(){
     }
     glPopMatrix();
 }
+void atapRumahKeranda(){
+    //atap kiri
+    glPushMatrix();
+    glColor3f(1,0.5,0.2);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(0,3,0);
+        glVertex3f(5,5,-5);
+        glVertex3f(0,3,-10);
+    glEnd();
+    glPopMatrix();
+    //atap kanan
+    glPushMatrix();
+    glColor3f(1,0.5,0.2);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(10,3,0);
+        glVertex3f(5,5,-5);
+        glVertex3f(10,3,-10);
+    glEnd();
+    glPopMatrix();
+    //atap belakang
+    glPushMatrix();
+    glColor3f(1,0.5,0.2);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(0,3,-10);
+        glVertex3f(5,5,-5);
+        glVertex3f(10,3,-10);
+    glEnd();
+    glPopMatrix();
+    //atap depan
+    glPushMatrix();
+    glColor3f(1,0.5,0.2);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(0,3,0);
+        glVertex3f(5,5,-5);
+        glVertex3f(10,3,0);
+    glEnd();
+    glPopMatrix();
+}
+void posisiLampu(float x, float y, float z){
+    glPushMatrix();
+    glColor3f(1,1,1);
+    glTranslatef(x,y,z);
+    glutSolidSphere(0.2,100,100);
+    glPopMatrix();
+}
 void rumahKeranda(){
     //tembok kiri
     glPushMatrix();
-    glColor3f(1,0,0);
+    glColor3f(0,1,0);
+    glTranslatef(0,1,-5);
     glScalef(0.02,2,5);
-    glTranslatef(0,1,-1);
     glutSolidCube(2);
     glPopMatrix();
     //tembok kanan
     glPushMatrix();
     glColor3f(0,1,0);
+    glTranslatef(10,1,-5);
     glScalef(0.02,2,5);
-    glTranslatef(500,1,-1);
     glutSolidCube(2);
     glPopMatrix();
     //tembok belakang
     glPushMatrix();
     glColor3f(1,1,0);
-    //
-    glTranslatef(1,1,-2);
+    glTranslatef(5,1,-10);
     glScalef(5,2,0.02);
-    glRotatef(90,1,0,0);
-
-
     glutSolidCube(2);
     glPopMatrix();
+    //atap
+    atapRumahKeranda();
+    posisiLampu(5,5,-5);
 }
+void drawHalfSphere(int scaley, int scalex, GLfloat r) {
+   int i, j;
+   GLfloat v[scalex*scaley][3];
+
+   for (i=0; i<scalex; ++i) {
+     for (j=0; j<scaley; ++j) {
+       v[i*scaley+j][0]=r*cos(j*2*M_PI/scaley)*cos(i*M_PI/(2*scalex));
+       v[i*scaley+j][1]=r*sin(i*M_PI/(2*scalex));
+       v[i*scaley+j][2]=r*sin(j*2*M_PI/scaley)*cos(i*M_PI/(2*scalex));
+     }
+   }
+
+   glBegin(GL_QUADS);
+     for (i=0; i<scalex-1; ++i) {
+       for (j=0; j<scaley; ++j) {
+         glVertex3fv(v[i*scaley+j]);
+         glVertex3fv(v[i*scaley+(j+1)%scaley]);
+         glVertex3fv(v[(i+1)*scaley+(j+1)%scaley]);
+         glVertex3fv(v[(i+1)*scaley+j]);
+       }
+     }
+   glEnd();
+ }
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
@@ -329,7 +396,8 @@ void display(void){
     */
     garis2frontback();
     garis2leftright();
-    rumahKeranda();
+    //rumahKeranda();
+    drawHalfSphere(100,100,2);
 
     // Flush buffers to screen
 
