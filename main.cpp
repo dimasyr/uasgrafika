@@ -126,11 +126,23 @@ switch( key )
     case 'z':
         camera->LookUp(-0.6f);
         break;
+    case 'f':
+        camera->LookUp(0.1f);
+        break;
+    case 'v':
+        camera->LookUp(-0.1f);
+        break;
     case 's':
         camera->MoveUp(1.0f);
         break;
     case 'x':
         camera->MoveUp(-1.0f);
+        break;
+    case 'g':
+        camera->MoveUp(0.1f);
+        break;
+    case 'b':
+        camera->MoveUp(-0.1f);
         break;
     case 'd':
         camera->Move(2.0f);
@@ -274,42 +286,297 @@ void garis2leftright(){
     }
     glPopMatrix();
 }
-void atapRumahKeranda(){
+void atapRumahKeranda(float r, float g, float b){
     //atap kiri
+    glColor3f(r,g,b);
     glPushMatrix();
-    glColor3f(1,0.5,0.2);
+
     glBegin(GL_TRIANGLES);
-        glVertex3f(0,3,0);
+        glVertex3f(0.02,3,0);
         glVertex3f(5,5,-5);
-        glVertex3f(0,3,-10);
+        glVertex3f(0.02,3,-10);
     glEnd();
     glPopMatrix();
     //atap kanan
+
     glPushMatrix();
-    glColor3f(1,0.5,0.2);
+    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glVertex3f(10,3,0);
+        glVertex3f(9.98,3,0);
         glVertex3f(5,5,-5);
-        glVertex3f(10,3,-10);
+        glVertex3f(9.98,3,-9.98);
     glEnd();
     glPopMatrix();
     //atap belakang
     glPushMatrix();
-    glColor3f(1,0.5,0.2);
+    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glVertex3f(0,3,-10);
+        glVertex3f(0.02,3,-9.98);
         glVertex3f(5,5,-5);
-        glVertex3f(10,3,-10);
+        glVertex3f(9.98,3,-9.98);
     glEnd();
     glPopMatrix();
     //atap depan
     glPushMatrix();
-    glColor3f(1,0.5,0.2);
+    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glVertex3f(0,3,0);
+        glVertex3f(0.02,3,0);
         glVertex3f(5,5,-5);
-        glVertex3f(10,3,0);
+        glVertex3f(9.98,3,0);
     glEnd();
+    glPopMatrix();
+}
+void atapRumahKeranda2(float r, float g, float b){
+    //atap kiri
+    glColor3f(r,g,b);
+    glPushMatrix();
+
+    glBegin(GL_TRIANGLES);
+        glVertex3f(-0.02,3,0);
+        glVertex3f(5,5.02,-5);
+        glVertex3f(-0.02,3,-10.02);
+    glEnd();
+    glPopMatrix();
+    //atap kanan
+    glPushMatrix();
+    //glColor3f(1,0.5,0.2);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(10.02,3,0);
+        glVertex3f(5,5.02,-5);
+        glVertex3f(10.02,3,-10.02);
+    glEnd();
+    glPopMatrix();
+    //atap belakang
+    glPushMatrix();
+    //glColor3f(1,0.5,0.2);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(-0.02,3,-10.02);
+        glVertex3f(5,5.02,-5);
+        glVertex3f(10.02,3,-10.02);
+    glEnd();
+    glPopMatrix();
+    //atap depan
+    glPushMatrix();
+    //glColor3f(1,0.5,0.2);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(-0.02,3,0);
+        glVertex3f(5,5.02,-5);
+        glVertex3f(10.02,3,0);
+    glEnd();
+    glPopMatrix();
+}
+void tebalAtapKeranda(){
+    //depan
+    glPushMatrix();
+    glColor3f(1,0,0);
+    glBegin(GL_POLYGON);
+    glVertex3f(-0.02,3,0);
+    glVertex3f(-0.02,3.05,0);
+    glVertex3f(10.02,3.05,0);
+    glVertex3f(10.02,3,0);
+    glEnd();
+    glPopMatrix();
+    //belakang
+    glPushMatrix();
+    glColor3f(1,0,0);
+    glBegin(GL_POLYGON);
+    glVertex3f(-0.02,3,-10.02);
+    glVertex3f(-0.02,3.05,-10.02);
+    glVertex3f(10.02,3.05,-10.02);
+    glVertex3f(10.02,3,-10.02);
+    glEnd();
+    glPopMatrix();
+    //kiri
+    glPushMatrix();
+    glColor3f(1,0,0);
+    glBegin(GL_POLYGON);
+    glVertex3f(-0.02,3,-10.02);
+    glVertex3f(-0.02,3,0);
+    glVertex3f(-0.02,3.05,0);
+    glVertex3f(-0.02,3.05,-10.02);
+    glEnd();
+    glPopMatrix();
+    //kanan
+    glPushMatrix();
+    glColor3f(1,0,0);
+    glBegin(GL_POLYGON);
+    glVertex3f(10.02,3,-10.02);
+    glVertex3f(10.02,3,0);
+    glVertex3f(10.02,3.05,0);
+    glVertex3f(10.02,3.05,-10.02);
+    glEnd();
+    glPopMatrix();
+}
+void atapSegitiga(float flx, float fly, float flz,
+                  float frx, float fry, float frz,
+                  float brx, float bry, float brz,
+                  float blx, float bly, float blz,
+                  float midx, float midy, float midz){
+    //atap kiri
+    glColor3f(0.3,0.5,0.6);
+    glPushMatrix();
+    glBegin(GL_TRIANGLES);
+        glVertex3f(flx,fly,flz);
+        glVertex3f(midx,midy,midz);
+        glVertex3f(blx,bly,blz);
+    glEnd();
+    glPopMatrix();
+    //atap kanan
+    glPushMatrix();
+    //glColor3f(1,0.5,0.2);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(frx,fry,frz);
+        glVertex3f(midx,midy,midz);
+        glVertex3f(brx,bry,brz);
+    glEnd();
+    glPopMatrix();
+    //atap belakang
+    glPushMatrix();
+    //glColor3f(1,0.5,0.2);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(blx,bly,blz);
+        glVertex3f(midx,midy,midz);
+        glVertex3f(brx,bry,brz);
+    glEnd();
+    glPopMatrix();
+    //atap depan
+    glPushMatrix();
+    //glColor3f(1,0.5,0.2);
+    glBegin(GL_TRIANGLES);
+        glVertex3f(flx,fly,flz);
+        glVertex3f(midx,midy,midz);
+        glVertex3f(frx,fry,frz);
+    glEnd();
+    glPopMatrix();
+}
+void tugu(){
+    //body
+    glPushMatrix();
+    glColor3f(1,1,0);
+    glTranslatef(0,1,0);
+    glScalef(1,2,1);
+    glutSolidCube(1);
+    glPopMatrix();
+    //body atas
+    glPushMatrix();
+    glColor3f(1,0.2,0.5);
+    glTranslatef(0,2.05,0);
+    glScalef(1.2,0.1,1.2);
+    glutSolidCube(1);
+    glPopMatrix();
+    //atap
+    glPushMatrix();
+    glTranslatef(-0.5,0,0.5);
+    atapSegitiga(-0.1,2.1,0.1,1.1,2.1,0.1,1.1,2.1,-1.1,-0.1,2.1,-1.1,0.5,2.5,-0.5);
+    glPopMatrix();
+}
+void tuguPojok2(){
+    //depan kiri
+    glPushMatrix();
+    glTranslatef(0,0,0);
+    tugu();
+    glPopMatrix();
+    //baris kiri
+    float z=-4.5;
+    for(int ctr=0;ctr<19;ctr++){
+        glPushMatrix();
+        glTranslatef(0,0,z);
+        tugu();
+        glPopMatrix();
+        z-=5;
+    }
+    //belakang kiri
+    glPushMatrix();
+    glTranslatef(0,0,-99);
+    tugu();
+    glPopMatrix();
+
+    //depan kanan
+    glPushMatrix();
+    glTranslatef(99,0,0);
+    tugu();
+    glPopMatrix();
+    //baris kanan
+    z=-4.5;
+    for(int ctr=0;ctr<19;ctr++){
+        glPushMatrix();
+        glTranslatef(99,0,z);
+        tugu();
+        glPopMatrix();
+        z-=5;
+    }
+    //belakang kanan
+    glPushMatrix();
+    glTranslatef(99,0,-99);
+    tugu();
+    glPopMatrix();
+    // baris belakang
+    float x=4.5;
+    for(int ctr=0;ctr<19;ctr++){
+        glPushMatrix();
+        glTranslatef(x,0,-99);
+        tugu();
+        glPopMatrix();
+        x+=5;
+    }
+    //baris depan kiri
+    x=4.5;
+    for(int ctr=0;ctr<8;ctr++){
+        glPushMatrix();
+        glTranslatef(x,0,0);
+        tugu();
+        glPopMatrix();
+        x+=5;
+    }
+    //naris depan kanan
+    x=94.5;
+    for(int ctr=0;ctr<8;ctr++){
+        glPushMatrix();
+        glTranslatef(x,0,0);
+        tugu();
+        glPopMatrix();
+        x-=5;
+    }
+}
+void pagar(){
+    //kiri
+    glPushMatrix();
+    glColor3f(0.5,0.1,0.7);
+    glTranslatef(0.5,0.625,-50);
+    glScalef(1,2.5,200);
+    glutSolidCube(0.5);
+    glPopMatrix();
+    //kanan
+    glPushMatrix();
+    glColor3f(0.5,0.1,0.7);
+    glTranslatef(99.5,0.625,-50);
+    glScalef(1,2.5,200);
+    glutSolidCube(0.5);
+    glPopMatrix();
+    //belakang
+    glPushMatrix();
+    glColor3f(0.5,0.1,0.7);
+    glTranslatef(50,0.625,-99.5);
+    glRotatef(90,0,1,0);
+    glScalef(1,2.5,200);
+    glutSolidCube(0.5);
+    glPopMatrix();
+    //depan kiri
+    glPushMatrix();
+    glColor3f(0.5,0.1,0.7);
+    glTranslatef(20,0.625,-0.5);
+    glRotatef(90,0,1,0);
+    glScalef(1,2.5,80);
+    glutSolidCube(0.5);
+    glPopMatrix();
+    //depan kanan
+    //depan kiri
+    glPushMatrix();
+    glColor3f(0.5,0.1,0.7);
+    glTranslatef(80,0.625,-0.5);
+    glRotatef(90,0,1,0);
+    glScalef(1,2.5,80);
+    glutSolidCube(0.5);
     glPopMatrix();
 }
 void posisiLampu(float x, float y, float z){
@@ -342,8 +609,13 @@ void rumahKeranda(){
     glutSolidCube(2);
     glPopMatrix();
     //atap
-    atapRumahKeranda();
-    posisiLampu(5,5,-5);
+    atapRumahKeranda(1,0.5,0.2);
+
+    glPushMatrix();
+    glTranslatef(0,0.05,0);
+    atapRumahKeranda2(0.5,0.5,0.2);
+    glPopMatrix();
+    tebalAtapKeranda();
 }
 void drawHalfSphere(int scaley, int scalex, GLfloat r) {
    int i, j;
@@ -1514,13 +1786,17 @@ void display(void){
     */
     garis2frontback();
     garis2leftright();
+//    posisiLampu(5,5,-5);
+    glPushMatrix();
+    glTranslatef(80,1,-60);
+    rumahKeranda();
+    glPopMatrix();
+    glPushMatrix();
+    glTranslatef(0.5,0,-0.5);
+    tuguPojok2();
+    glPopMatrix();
+    pagar();
 
-    //posisicabang();
-    //semak();
-    //sumur();
-    //jalan();
-    //lampu();
-    //rumahKeranda();
 
     // Flush buffers to screen
 
@@ -1546,7 +1822,7 @@ void reshape(int w, int h){
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
-int main (int argc, char **argv){
+int main(int argc, char **argv){
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
     glutInitWindowSize(1366,768);
