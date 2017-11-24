@@ -30,6 +30,9 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add library="opengl32" />
+					<Add library="glut32" />
+					<Add library="glu32" />
 				</Linker>
 			</Target>
 		</Build>

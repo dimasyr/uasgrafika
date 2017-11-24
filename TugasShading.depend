@@ -20,3 +20,24 @@
 	<gl/Gl.h>
 	"Camera.h"
 
+1510918064 source:d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\camera.cpp
+	<math.h>
+	<windows.h>
+	<gl/Gl.h>
+	"Camera.h"
+
+1510918064 d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\camera.h
+	<windows.h>
+	<gl\Gl.h>
+	<gl\glu.h>
+	"Vector3.h"
+
+1510918064 d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\vector3.h
+	<math.h>
+
+1511093715 source:d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\main.cpp
+	<iostream>
+	<GL/glut.h>
+	"Camera.h"
+	<math.h>
+
