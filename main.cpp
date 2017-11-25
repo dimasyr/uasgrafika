@@ -1739,6 +1739,171 @@ void posisicabang (){
     semak();
     glPopMatrix();
 }
+
+void balok ()
+{
+glBegin(GL_POLYGON);
+    glPushMatrix();
+    //depan
+    glBegin(GL_POLYGON);
+        glColor3f(1,0,0);
+        glVertex3f(-0.5,0.5,0);
+        glVertex3f(0.5,0.5,0);
+        glVertex3f(0.5,-0.5,0);
+        glVertex3f(-0.5,-0.5,0);
+    glEnd();
+    //kanan
+
+    glBegin(GL_POLYGON);
+        glColor3f(0,1,0);
+        glVertex3f(0.5,0.5,0);
+        glVertex3f(0.5,0.5,-1);
+        glVertex3f(0.5,-0.5,-1);
+        glVertex3f(0.5,-0.5,0);
+    glEnd();
+    //kiri
+    glBegin(GL_POLYGON);
+        glColor3f(0,0,1);
+        glVertex3f(-0.5,0.5,0);
+        glVertex3f(-0.5,0.5,-1);
+        glVertex3f(-0.5,-0.5,-1);
+        glVertex3f(-0.5,-0.5,0);
+    glEnd();
+    //belakang
+    glBegin(GL_POLYGON);
+        glColor3f(1,1,0);
+        glVertex3f(-0.5,0.5,-1);
+        glVertex3f(0.5,0.5,-1);
+        glVertex3f(0.5,-0.5,-1);
+        glVertex3f(-0.5,-0.5,-1);
+    glEnd();
+    //atas
+    glBegin(GL_POLYGON);
+        glColor3f(0,1,1);
+        glVertex3f(-0.5,0.5,0);
+        glVertex3f(0.5,0.5,0);
+        glVertex3f(0.5,0.5,-1);
+        glVertex3f(-0.5,0.5,-1);
+    glEnd();
+    //bawah
+        glBegin(GL_POLYGON);
+        glColor3f(1,0,1);
+        glVertex3f(-0.5,-0.5,0);
+        glVertex3f(0.5,-0.5,0);
+        glVertex3f(0.5,-0.5,-1);
+        glVertex3f(-0.5,-0.5,-1);
+    glEnd();
+    glPopMatrix();
+
+    glEnd();
+
+}
+
+void trapesium(){
+    //Sisi depan belakang
+    glBegin(GL_POLYGON);
+        glNormal3f(-2.0, 0.0, -2.0);
+        glVertex3f(0.0, 0.0, -2.0);
+        glNormal3f(2.0, 0.0, -2.0);
+        glVertex3f(2.0, 0.0, -2.0);
+        glNormal3f(2.0, 4.0, -2.0);
+        glVertex3f(2.0, 4.0, -2.0);
+        glNormal3f(1.0, 4.0, -2.0);
+        glVertex3f(1.0, 4.0, -2.0);
+        glNormal3f(-2.0, 1.0, -2.0);
+        glVertex3f(-2.0, 1.0, -2.0);
+    glEnd();
+    glBegin(GL_POLYGON);
+        glNormal3f(-2.0, 0.0, 2.0);
+        glVertex3f(-2.0, 0.0, 2.0);
+        glNormal3f(2.0, 0.0, 2.0);
+        glVertex3f(2.0, 0.0, 2.0);
+        glNormal3f(2.0, 4.0, 2.0);
+        glVertex3f(2.0, 4.0, 2.0);
+        glNormal3f(1.0, 4.0, 2.0);
+        glVertex3f(1.0, 4.0, 2.0);
+        glNormal3f(-2.0, 1.0, 2.0);
+        glVertex3f(-2.0, 1.0, 2.0);
+    glEnd();
+
+    //Penutup samping
+    glBegin(GL_QUADS);
+        glNormal3f(1.0, 4.0, 2.0);
+        glVertex3f(1.0, 4.0, 2.0);
+        glNormal3f(1.0, 4.0, -2.0);
+        glVertex3f(1.0, 4.0, -2.0);
+        glNormal3f(-2.0, 1.0, -2.0);
+        glVertex3f(-2.0, 1.0, -2.0);
+        glNormal3f(-2.0, 1.0, 2.0);
+        glVertex3f(-2.0, 1.0, 2.0);
+    glEnd();
+
+    // Penutup kiri
+    glBegin(GL_QUADS);
+        glNormal3f(-2.0, 1.0, 2.0);
+        glVertex3f(-2.0, 1.0, 2.0);
+        glNormal3f(-2.0, 1.0, -2.0);
+        glVertex3f(-2.0, 1.0, -2.0);
+        glNormal3f(-2.0, 0.0, -2.0);
+        glVertex3f(-2.0, 0.0, -2.0);
+        glNormal3f(-2.0, 0.0, 2.0);
+        glVertex3f(-2.0, 0.0, 2.0);
+    glEnd();
+
+    //Penutup Bawah
+    glBegin(GL_QUADS);
+        glNormal3f(-2.0, 0.0, -2.0);
+        glVertex3f(-2.0, 0.0, -2.0);
+        glNormal3f(-2.0, 0.0, 2.0);
+        glVertex3f(-2.0, 0.0, 2.0);
+        glNormal3f(2.0, 0.0, 2.0);
+        glVertex3f(2.0, 0.0, 2.0);
+        glNormal3f(2.0, 0.0, -2.0);
+        glVertex3f(2.0, 0.0, -2.0);
+    glEnd();
+
+    //Penutup Kanan
+    glBegin(GL_QUADS);
+        glNormal3f(2.0, 0.0, 2.0);
+        glVertex3f(2.0, 0.0, 2.0);
+        glNormal3f(2.0, 0.0, -2.0);
+        glVertex3f(2.0, 0.0, -2.0);
+        glNormal3f(2.0, 4.0, -2.0);
+        glVertex3f(2.0, 4.0, -2.0);
+        glNormal3f(2.0, 4.0, 2.0);
+        glVertex3f(2.0, 4.0, 2.0);
+    glEnd();
+
+    //Penutup Atas
+    glBegin(GL_QUADS);
+        glNormal3f(2.0, 4.0, -2.0);
+        glVertex3f(2.0, 4.0, -2.0);
+        glNormal3f(2.0, 4.0, 2.0);
+        glVertex3f(2.0, 4.0, 2.0);
+        glNormal3f(1.0, 4.0, 2.0);
+        glVertex3f(1.0, 4.0, 2.0);
+        glNormal3f(1.0, 4.0, -2.0);
+        glVertex3f(1.0, 4.0, -2.0);
+    glEnd();
+}
+void kuburan()
+{
+    glPushMatrix();
+    glTranslatef(0.0, 0.0, 0.0);
+    glScalef(6.0, 0.9, 2.0);
+    balok();
+    glPopMatrix();
+
+    glPushMatrix();
+    glScalef(0.5,0.3,0.5);
+    glTranslatef(14.0, 4.8, -32.0);
+    trapesium();
+    glPopMatrix();
+
+}
+
+
+
 void alas(){
     glPushMatrix();
     glColor3f(0.3, 0.7, 0.35);
@@ -1807,8 +1972,14 @@ void display(void){
     glPopMatrix();
 
     glPushMatrix();
+    glTranslatef(5, 1, -15);
+    kuburan();
+    glPopMatrix();
+    glPushMatrix();
     alas();
     glPopMatrix();
+
+
 
     // Flush buffers to screen
 
