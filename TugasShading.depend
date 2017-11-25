@@ -35,7 +35,7 @@
 1510918064 d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\vector3.h
 	<math.h>
 
-1511093715 source:d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\main.cpp
+1511530595 source:d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\main.cpp
 	<iostream>
 	<GL/glut.h>
 	"Camera.h"

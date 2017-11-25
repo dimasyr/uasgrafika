@@ -725,27 +725,27 @@ tabung(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat jari_jari_bawah, GLfloa
  {
     glPushMatrix();
     glColor3d(1,0,0);
-    glTranslated(3.0,10.0,-6);
+    glTranslated(3.0,2.3,-6);
     glRotated(90.0, 1.0, 0.0, 0.0);
-    glutSolidCone(1.5, 1, 50, 50);
+    glutSolidCone(0.5, 0.5, 50, 50);
     glPopMatrix();
 
     glPushMatrix();
     glColor3f(1,1,1);
-    tabung(3.0, 0.0, -6, 0.2, 0.2, 10.0, 6, 1, true, true);
+    tabung(3.0, 0.0, -6, 0.07, 0.07, 2.0, 6, 1, true, true);
     glRotated(90, -1.0, 0.0, 0.0);
 
     glPopMatrix();
 
     glPushMatrix();
     glColor3f(1,1,1);
-    glTranslatef(3.0,11.0,-6);
-    glutSolidSphere(radius,25,25);
+    glTranslatef(3.0,2.54,-6);
+    glutSolidSphere(0.5,25,25);
     glPopMatrix();
 
     glPushMatrix();
     glColor3f(1,1,0);
-    tabung(3.0, 0.0, -6, 0.5, 0.5, 0.2, 6, 1, true, true);
+    tabung(3.0, 0.0, -6, 0.3, 0.3, 0.2, 6, 1, true, true);
     glRotated(90, -1.0, 0.0, 0.0);
     glPopMatrix();
  }
@@ -795,10 +795,10 @@ void sumur ()
 {
     glPushMatrix();
     glColor3f(0.8, 0.8, 0.8);
-    tabungtebal(0.0, 0.0, -5.0, 5, 6, 6);
+    tabungtebal(0.0, 0.0, -5.0, 0.9, 1, 1);
     glColor3f(0.4, 0.8, 0.8);
-    tabungtebal(0.0, 5, -5.0, 0, 6, 8);
-    tabungtebal(0.0, 0.0, -5.0, 6, 8, 8);
+    tabungtebal(0.0, 1, -5.0, 0, 0.9, 1.5);
+    tabungtebal(0.0, 0.0, -5.0, 1, 1.5, 1.5);
     glPopMatrix();
 }
 
@@ -1756,6 +1756,11 @@ void posisicabang ()
     glTranslatef(0.0, 0.0, 1.0);
 	cabang();
     glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0.0, 5.0, 0.2 );
+    semak();
+    glPopMatrix();
 }
 
 void display(void){
@@ -1796,6 +1801,21 @@ void display(void){
     tuguPojok2();
     glPopMatrix();
     pagar();
+
+    glPushMatrix();
+    glTranslatef(5, 0, 5);
+    lampu();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(10, 0, -5);
+    sumur();
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(15, 1, -10);
+    posisicabang();
+    glPopMatrix();
 
 
     // Flush buffers to screen
