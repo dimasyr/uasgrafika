@@ -1800,6 +1800,8 @@ glBegin(GL_POLYGON);
 }
 
 void trapesium(){
+ glBegin(GL_POLYGON);
+ glPushMatrix();
     //Sisi depan belakang
     glBegin(GL_POLYGON);
         glNormal3f(-2.0, 0.0, -2.0);
@@ -1885,6 +1887,9 @@ void trapesium(){
         glNormal3f(1.0, 4.0, -2.0);
         glVertex3f(1.0, 4.0, -2.0);
     glEnd();
+
+    glPopMatrix();
+    glEnd();
 }
 void kuburan()
 {
@@ -1895,8 +1900,9 @@ void kuburan()
     glPopMatrix();
 
     glPushMatrix();
+    glTranslatef(4, 1.45, -12.9);
     glScalef(0.5,0.3,0.5);
-    glTranslatef(14.0, 4.8, -32.0);
+    glRotatef(270, 0.0, 1.0, 0.0 );
     trapesium();
     glPopMatrix();
 
@@ -1973,8 +1979,10 @@ void display(void){
 
     glPushMatrix();
     glTranslatef(5, 1, -15);
+    glRotatef(90, 0.0, 1.0, 0.0);
     kuburan();
     glPopMatrix();
+
     glPushMatrix();
     alas();
     glPopMatrix();
