@@ -1739,9 +1739,7 @@ void posisicabang (){
     semak();
     glPopMatrix();
 }
-
-void balok ()
-{
+void balok (){
 glBegin(GL_POLYGON);
     glPushMatrix();
     //depan
@@ -1798,7 +1796,6 @@ glBegin(GL_POLYGON);
     glEnd();
 
 }
-
 void trapesium(){
  glBegin(GL_POLYGON);
  glPushMatrix();
@@ -1907,9 +1904,6 @@ void kuburan()
     glPopMatrix();
 
 }
-
-
-
 void alas(){
     glPushMatrix();
     glColor3f(0.3, 0.7, 0.35);
@@ -1986,6 +1980,7 @@ void display(void){
     glPushMatrix();
     alas();
     glPopMatrix();
+
 
 
 
