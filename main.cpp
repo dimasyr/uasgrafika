@@ -23,6 +23,8 @@ GLuint tembok;
 GLuint cagaksumur;
 GLuint atap;
 GLuint timbatxt;
+GLuint backijo;
+GLuint innalillahi;
 
 GLUquadricObj *p = gluNewQuadric();
 
@@ -1080,12 +1082,27 @@ void tabung(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat jari_jari_bawah, G
         glEnd();
     }
 }
+void tulisan(){
+    glPushMatrix();
+    glBegin(GL_POLYGON);
+    glTexCoord2f(0,0);
+    glVertex3f(0,1,0);
+    glTexCoord2f(1,0);
+    glVertex3f(1,1,0);
+    glTexCoord2f(1,1);
+    glVertex3f(1,2,0);
+    glTexCoord2f(0,1);
+    glVertex3f(0,2,0);
+    glEnd();
+    glPopMatrix();
+
+}
 void lampu(){
     glPushMatrix();
     glColor3d(1,0,0);
     glTranslated(3.0,2.3,-6);
     glRotated(90.0, 1.0, 0.0, 0.0);
-    glutSolidCone(0.5, 0.5, 50, 50);
+    glutSolidCone(0.3, 0.5, 50, 50);
     glPopMatrix();
 
     glPushMatrix();
@@ -2159,7 +2176,7 @@ glBegin(GL_POLYGON);
     glBegin(GL_POLYGON);
         glNormal3fv(calculate_normal(vertices[0],vertices[1],vertices[2]));
         for(int x=0;x<4;x++){
-                glTexCoord2fv(textcoord[x]);
+                glTexCoord2f(vertices[x][0], vertices[x][1]);
             glVertex3fv(vertices[x]);
         }
     glEnd();
@@ -2167,7 +2184,7 @@ glBegin(GL_POLYGON);
     glBegin(GL_POLYGON);
         glNormal3fv(calculate_normal(vertices2[0],vertices2[1],vertices2[2]));
         for(int x=0;x<4;x++){
-                glTexCoord2fv(textcoord[x]);
+                glTexCoord2f(vertices[x][0], vertices[x][1]);
             glVertex3fv(vertices2[x]);
         }
     glEnd();
@@ -2175,7 +2192,7 @@ glBegin(GL_POLYGON);
     glBegin(GL_POLYGON);
         glNormal3fv(calculate_normal(vertices3[0],vertices3[1],vertices3[2]));
         for(int x=0;x<4;x++){
-                glTexCoord2fv(textcoord[x]);
+                glTexCoord2f(vertices[x][0], vertices[x][1]);
             glVertex3fv(vertices3[x]);
         }
     glEnd();
@@ -2192,7 +2209,7 @@ glBegin(GL_POLYGON);
     glBegin(GL_POLYGON);
         glNormal3fv(calculate_normal(vertices4[0],vertices4[1],vertices4[2]));
         for(int x=0;x<4;x++){
-                glTexCoord2fv(textcoord[x]);
+                glTexCoord2f(vertices[x][0], vertices[x][1]);
             glVertex3fv(vertices4[x]);
         }
     glEnd();
@@ -2209,7 +2226,7 @@ glBegin(GL_POLYGON);
     glBegin(GL_POLYGON);
         glNormal3fv(calculate_normal(vertices5[0],vertices5[1],vertices5[2]));
         for(int x=0;x<4;x++){
-                glTexCoord2fv(textcoord[x]);
+                glTexCoord2f(vertices[x][0], vertices[x][1]);
             glVertex3fv(vertices5[x]);
         }
     glEnd();
@@ -2226,7 +2243,7 @@ glBegin(GL_POLYGON);
     glBegin(GL_POLYGON);
         glNormal3fv(calculate_normal(vertices6[0],vertices6[1],vertices6[2]));
         for(int x=0;x<4;x++){
-                glTexCoord2fv(textcoord[x]);
+                glTexCoord2f(vertices[x][0], vertices[x][1]);
             glVertex3fv(vertices6[x]);
         }
     glEnd();
@@ -2277,7 +2294,30 @@ void rumahKeranda(){
     glTranslatef(85,0,-85);
     tebalAtapKeranda();
     glPopMatrix();
+
+    //tali
+    glPushMatrix();
+    glTranslatef(85,0,-85);
+    tabung(5, 3.5, -5, 0.03, 0.03, 1.5, 6, 1, true, true);
+    glPopMatrix();
+
+    //vitingan
+    glPushMatrix();
+    glTranslatef(5,3.309,-5);
+    glTranslatef(85,0,-85);
+    glRotatef(-90,1,0,0);
+    glutSolidCone(0.5,0.2,50,50);
+    glPopMatrix();
+
+    //lampunya
+    glPushMatrix();
+    setMaterialputih();
+    glTranslatef(5,3.4,-5);
+    glTranslatef(85,0,-85);
+    glutSolidSphere(0.1,50,50);
+    glPopMatrix();
 }
+
 void bunga(){
     glColor3f(1,1,1);
     //glEnable(GL_TEXTURE_2D);
@@ -2721,22 +2761,50 @@ void keranda(){
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
 	glutSolidTorus(0.06,0.01,10,110);
     glPopMatrix();
+
     //kotak
     glPushMatrix();
     setMaterialijo();
-    glTranslatef(7,1.17,-2);
+    glTranslatef(7,1.17,-2.001);
     glTranslatef(85,0,-85);
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
-    glScalef(1.14,0.47,3.5);
+    glScalef(1.14,0.47,3.489);
+    glBindTexture(GL_TEXTURE_2D, backijo);
     balok();
+    glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
+
     //lengkungan
     glPushMatrix();
-    glTranslatef(2,-4,-5.5);
+    glTranslatef(2,-4.2,-5.485);
     glTranslatef(85,0,-85);
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glRotatef(90,1.0, 0.0, 0.0);
-    tabung(5, 0.0, -5.4 , 0.57, 0.57, 3.5, 6, 1, true, true);
+    glBindTexture(GL_TEXTURE_2D, backijo);
+    tabung(5, 0.0, -5.6 , 0.57, 0.57, 3.479, 6, 1, true, true);
+    glBindTexture(GL_TEXTURE_2D, -1);
+    glPopMatrix();
+    //tulisan kiri
+    glPushMatrix();
+    glTranslatef(6.429,0.4,-5.465);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glRotatef(-90,0,1,0);
+    glScalef(3.463,0.5,1);
+    glBindTexture(GL_TEXTURE_2D, innalillahi);
+    tulisan();
+    glBindTexture(GL_TEXTURE_2D, -1);
+    glPopMatrix();
+    //tulisan kanan
+    glPushMatrix();
+    glTranslatef(7.575,0.4,-2.02);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glRotatef(90,0,1,0);
+    glScalef(3.463,0.5,1);
+    glBindTexture(GL_TEXTURE_2D, innalillahi);
+    tulisan();
+    glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
 }
 void pocong(){
@@ -3078,6 +3146,8 @@ int main(int argc, char **argv){
 	cagaksumur = loadBmpFile("metaltex.bmp");
 	atap = loadBmpFile("genteng.bmp");
 	timbatxt = loadBmpFile("wood.bmp");
+	backijo = loadBmpFile("ijo_text.bmp");
+	innalillahi = loadBmpFile("innalillahi_text.bmp");
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
