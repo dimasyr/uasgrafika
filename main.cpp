@@ -26,17 +26,27 @@ GLuint timbatxt;
 
 GLUquadricObj *p = gluNewQuadric();
 
-GLfloat xRotated, yRotated, zRotated;
+GLfloat xRotated, yRotated, zRotated, poskerx=0, poskery=0, poskerz=0;
 GLdouble radius=1.5;
 
 GLfloat qaBlack[] = {0.0, 0.0, 0.0, 1.0}; //Black Color
 GLfloat qaGreen[] = {0.0, 1.0, 0.0, 1.0}; //Green Color
 GLfloat qaWhite[] = {1.0, 1.0, 1.0, 1.0}; //White Color
 GLfloat qaRed[] = {1.0, 0.0, 0.0, 1.0}; //White Color
+//GLfloat letakCahaya[][]
 
+float cahayax=0.0, cahayay=2.0, cahayaz=3.0;
 static GLdouble viewer[]= {0.0, 0.0, 10.0};
-static GLfloat theta = 0.0, speed = 0.05;
+static GLfloat theta = 0.0, speed = 0.15, speed2 = 0.35, theta2= 0.0;
+float y=0;
 Camera*	camera;
+
+float textcoord[][2] = {
+        {0, 1},
+        {0, 0},
+        {1, 0},
+        {1, 1}
+};
 
 void display(void);
 void reshape(int x, int y);
@@ -116,8 +126,7 @@ GLfloat cvertices[8][3] = {{-0.5 , -0.5, 0.5},
                            { 0.5 ,  0.5, -0.5},
                            {-0.5 ,  0.5, -0.5}
                            };
-void normalize(float*v)
-{
+void normalize(float*v){
     float length =sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
 
     for(int i=0; i<3; i++)
@@ -125,9 +134,7 @@ void normalize(float*v)
         v[i]=v[i]/length;
     }
 }
-
-float *cross_product(float*a, float*b)
-{
+float *cross_product(float*a, float*b){
     float* result = new float[3];
     result[0] = a[1] * b[2] - a[2] * b[1];
     result[1] =  -(a[0] * b[2] - a[2] * b[0]);
@@ -137,9 +144,7 @@ float *cross_product(float*a, float*b)
 
     return result;
 }
-
-float *calculate_normal(float *a, float *b, float *c)
-{
+float *calculate_normal(float *a, float *b, float *c){
     float x[]={b[0]-a[0], b[1]-a[1], b[2]-a[2] };
     float y[]={c[0]-a[0], c[1]-a[1], c[2]-a[2] };
 
@@ -223,42 +228,90 @@ void cube(float besar){
     glEnd();
 
 }
-
-
 void idleFunc(void){
+    //zRotated += 0.02;
 
-     zRotated += 0.02;
+    theta2 +=speed2;
 
-    display();
+    if((camera->pos.x>85) && (camera->pos.z < -85)){
+      theta += speed;
+    }
+
+    if(theta2<=40){
+        speed2 = 1.00;
+    }
+    else if((theta2 >40) && (theta2 <70) ){
+        speed2 = 0.75;
+    }
+    else if((theta2 > 70) && (theta2 <110)){
+        speed2 = 0.45;
+    }
+    else if((theta2>110) && (theta2 <140)){
+        speed2 = 0.75;
+    }
+    else if((theta2>140) && (theta2 <=180)){
+        speed2 = 1.00;
+    }
+
+//    theta2 += sin //theta = theta + speed
+    if( theta > 360.0 ) theta -= 360.0;
+    glutPostRedisplay();
 }
 void setLighting(){
     // Set lighting intensity and color
     GLfloat qaAmbientLight[] = {0.2, 0.2, 0.2, 1.0};
     GLfloat qaDiffuseLight[] = {1.0, 1.0, 0.8, 1.0};
-    GLfloat qaSpecularLight[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat qaSpecularLight[] = {0, 0,0,1};
     GLfloat emitLight[] = {0.9, 0.9, 0.9, 0.01};
     GLfloat Noemit[] = {0.0, 0.0, 0.0, 1.0};
 
     // Light source position
-    GLfloat qaLightPosition[]    = {0, 2, 2.5, 0.5};
+    GLfloat qaLightPosition[]    = {cahayax, cahayay, cahayaz, 0.7};
+    GLfloat qaLightPosition2[]    = {50, 6, -60, 0.7};
 
     // Set lighting intensity and color
     glLightfv(GL_LIGHT0, GL_AMBIENT, qaAmbientLight);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, qaDiffuseLight);
     glLightfv(GL_LIGHT0, GL_SPECULAR, qaSpecularLight);
 
+    glLightfv(GL_LIGHT1, GL_AMBIENT, qaAmbientLight);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, qaDiffuseLight);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, qaSpecularLight);
+
     // Set the light position
     glLightfv(GL_LIGHT0, GL_POSITION, qaLightPosition);
+    glLightfv(GL_LIGHT1, GL_POSITION, qaLightPosition2);
 
     // Enable lighting
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
 }
 void setMaterialijo(){
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, qaGreen);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, qaGreen);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, qaWhite);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20);
+}
+void setMaterialhitam(){
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, qaBlack);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, qaBlack);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, qaBlack);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20);
+}
+void setMaterialmerah(){
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, qaRed);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, qaRed);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, qaRed);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20);
+}
+void setMaterialputih(){
+     float MatAmbient[] = { 0.325f, 0.30725f, 0.30725f, 0.922f};
+    float MatDiffuse[] = { 0.929f, 0.929f, 0.929f, 0.922f  };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MatAmbient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MatDiffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, qaWhite);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 10);
 }
 void setmaterialPerl(){
     float MatAmbient[] = { 0.25f, 0.20725f, 0.20725f, 0.922f};
@@ -271,6 +324,17 @@ void setmaterialPerl(){
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpecular);
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, MatShininess);
     glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, black);
+}
+void setmaterialWhiteRubber(){
+    float MatAmbient[] = { 0.05f,0.05f,0.05f,1.0f };
+    float MatDiffuse[] = { 0.5f,0.5f,0.5f,1.0f  };
+    float MatSpecular[] = { 0.7f,0.7f,0.7f,1.0f };
+    float MatShininess = 10.0f;
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MatAmbient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MatDiffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, MatSpecular);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, MatShininess);
 }
 void setMaterialJade(){
     float mat_ambient[] ={ 0.135f, 0.2225f, 0.1575f, 0.95f };
@@ -299,6 +363,28 @@ float mat_ambient[] ={ 0.105882f, 0.058824f, 0.113725f, 1.0f };
 float mat_diffuse[] ={0.427451f, 0.470588f, 0.541176f, 1.0f };
 float mat_specular[] ={0.333333f, 0.333333f, 0.521569f, 1.0f };
 float shine = 9.84615f;
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shine);
+}
+void setMaterialBrass(){
+float mat_ambient[] ={ 0.329412f, 0.223529f, 0.027451f,1.0f };
+float mat_diffuse[] ={ 0.780392f, 0.568627f, 0.113725f, 1.0f };
+float mat_specular[] ={ 0.992157f, 0.941176f, 0.807843f, 1.0f };
+float shine = 27.8974f;
+
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, shine);
+}
+void setMaterialBlackRubber(){
+float mat_ambient[] ={ 0.0f, 0.0f, 0.0f, 1.0f };
+float mat_diffuse[] ={ 0.09f, 0.09f, 0.09f, 1.0f };
+float mat_specular[] ={ 0.70f, 0.70f, 0.70f, 1.0f };
+float shine = 76.0f;
 
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, mat_ambient);
     glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, mat_diffuse);
@@ -489,145 +575,204 @@ void garis2leftright(){
     glPopMatrix();
 }
 void atapRumahKeranda(float r, float g, float b){
+    //1
+    GLfloat vertices[3][3]=
+    {
+        {0.02,3,0},
+        {5,5,-5},
+        {0.02,3,-10}
+    };
     //atap kiri
     glPushMatrix();
-
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(0.02,3,0);
-        glTexCoord2f(0,1);
-        glVertex3f(5,5,-5);
-        glTexCoord2f(1,0);
-        glVertex3f(0.02,3,-10);
+        glNormal3fv(calculate_normal(vertices[0],vertices[1],vertices[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices[x]);
+        }
     glEnd();
     glPopMatrix();
+    //2
+    GLfloat vertices2[3][3]=
+    {
+        {9.98,3,0},
+        {5,5,-5},
+        {9.98,3,-9.98}
+    };
     //atap kanan
-
     glPushMatrix();
-    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(9.98,3,0);
-        glTexCoord2f(0,1);
-        glVertex3f(5,5,-5);
-        glTexCoord2f(1,0);
-        glVertex3f(9.98,3,-9.98);
+        glNormal3fv(calculate_normal(vertices2[0],vertices2[1],vertices2[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices2[x]);
+        }
     glEnd();
     glPopMatrix();
+    //3
+    GLfloat vertices3[3][3]=
+    {
+        {0.02,3,-9.98},
+        {5,5,-5},
+        {9.98,3,-9.98}
+    };
     //atap belakang
     glPushMatrix();
-    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(0.02,3,-9.98);
-        glTexCoord2f(0,1);
-        glVertex3f(5,5,-5);
-        glTexCoord2f(1,0);
-        glVertex3f(9.98,3,-9.98);
+        glNormal3fv(calculate_normal(vertices3[0],vertices3[1],vertices3[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices3[x]);
+        }
     glEnd();
     glPopMatrix();
+    //4
+    GLfloat vertices4[3][3]=
+    {
+        {0.02,3,0},
+        {5,5,-5},
+        {9.98,3,0}
+    };
     //atap depan
     glPushMatrix();
-    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(0.02,3,0);
-        glTexCoord2f(0,1);
-        glVertex3f(5,5,-5);
-        glTexCoord2f(1,0);
-        glVertex3f(9.98,3,0);
+        glNormal3fv(calculate_normal(vertices4[0],vertices4[1],vertices4[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices4[x]);
+        }
     glEnd();
     glPopMatrix();
 }
 void atapRumahKeranda2(float r, float g, float b){
+    //1
+    GLfloat vertices[3][3]=
+    {
+        {-0.02,3,0},
+        {5,5.02,-5},
+        {-0.02,3,-10.02}
+    };
     //atap kiri
     glPushMatrix();
-
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(-0.02,3,0);
-        glTexCoord2f(0,1);
-        glVertex3f(5,5.02,-5);
-        glTexCoord2f(1,0);
-        glVertex3f(-0.02,3,-10.02);
+        glNormal3fv(calculate_normal(vertices[0],vertices[1],vertices[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices[x]);
+        }
     glEnd();
     glPopMatrix();
+    //2
+    GLfloat vertices2[3][3]=
+    {
+        {10.02,3,0},
+        {5,5.02,-5},
+        {10.02,3,-10.02}
+    };
     //atap kanan
     glPushMatrix();
-    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(10.02,3,0);
-        glTexCoord2f(0,1);
-        glVertex3f(5,5.02,-5);
-        glTexCoord2f(1,0);
-        glVertex3f(10.02,3,-10.02);
+        glNormal3fv(calculate_normal(vertices2[0],vertices2[1],vertices2[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices2[x]);
+        }
     glEnd();
     glPopMatrix();
+    //3
+    GLfloat vertices3[3][3]=
+    {
+        {-0.02,3,-10.02},
+        {5,5.02,-5},
+        {10.02,3,-10.02}
+    };
     //atap belakang
     glPushMatrix();
-    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(-0.02,3,-10.02);
-        glTexCoord2f(0,1);
-        glVertex3f(5,5.02,-5);
-        glTexCoord2f(1,0);
-        glVertex3f(10.02,3,-10.02);
+        glNormal3fv(calculate_normal(vertices3[0],vertices3[1],vertices3[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices3[x]);
+        }
     glEnd();
     glPopMatrix();
+    //4
+    GLfloat vertices4[3][3]=
+    {
+        {-0.02,3,0},
+        {5,5.02,-5},
+        {10.02,3,0}
+    };
     //atap depan
     glPushMatrix();
-    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(-0.02,3,0);
-        glTexCoord2f(0,1);
-        glVertex3f(5,5.02,-5);
-        glTexCoord2f(1,0);
-        glVertex3f(10.02,3,0);
+        glNormal3fv(calculate_normal(vertices4[0],vertices4[1],vertices4[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices4[x]);
+        }
     glEnd();
     glPopMatrix();
 }
 void tebalAtapKeranda(){
+    //1
+    GLfloat vertices[4][3]=
+    {
+        {-0.02,3,0},
+        {-0.02,3.05,0},
+        {10.02,3.05,0},
+        {10.02,3,0}
+    };
     //depan
     glPushMatrix();
-    glColor3f(1,0,0);
     glBegin(GL_POLYGON);
-    glVertex3f(-0.02,3,0);
-    glVertex3f(-0.02,3.05,0);
-    glVertex3f(10.02,3.05,0);
-    glVertex3f(10.02,3,0);
+        glNormal3fv(calculate_normal(vertices[0],vertices[1],vertices[2]));
+        for(int x=0;x<4;x++){
+            glVertex3fv(vertices[x]);
+        }
     glEnd();
     glPopMatrix();
+    //2
+    GLfloat vertices2[4][3]=
+    {
+        {-0.02,3,-10.02},
+        {-0.02,3.05,-10.02},
+        {10.02,3.05,-10.02},
+        {10.02,3,-10.02}
+    };
     //belakang
     glPushMatrix();
-    glColor3f(1,0,0);
     glBegin(GL_POLYGON);
-    glVertex3f(-0.02,3,-10.02);
-    glVertex3f(-0.02,3.05,-10.02);
-    glVertex3f(10.02,3.05,-10.02);
-    glVertex3f(10.02,3,-10.02);
+        glNormal3fv(calculate_normal(vertices2[0],vertices2[1],vertices2[2]));
+        for(int x=0;x<4;x++){
+            glVertex3fv(vertices2[x]);
+        }
     glEnd();
     glPopMatrix();
+    //3
+    GLfloat vertices3[4][3]=
+    {
+        {-0.02,3,-10.02},
+        {-0.02,3,0},
+        {-0.02,3.05,0},
+        {-0.02,3.05,-10.02}
+    };
     //kiri
     glPushMatrix();
-    glColor3f(1,0,0);
     glBegin(GL_POLYGON);
-    glVertex3f(-0.02,3,-10.02);
-    glVertex3f(-0.02,3,0);
-    glVertex3f(-0.02,3.05,0);
-    glVertex3f(-0.02,3.05,-10.02);
+        glNormal3fv(calculate_normal(vertices3[0],vertices3[1],vertices3[2]));
+        for(int x=0;x<4;x++){
+            glVertex3fv(vertices3[x]);
+        }
     glEnd();
     glPopMatrix();
+    //4
+    GLfloat vertices4[4][3]=
+    {
+        {10.02,3,-10.02},
+        {10.02,3,0},
+        {10.02,3.05,0},
+        {10.02,3.05,-10.02}
+    };
     //kanan
     glPushMatrix();
-    glColor3f(1,0,0);
     glBegin(GL_POLYGON);
-    glVertex3f(10.02,3,-10.02);
-    glVertex3f(10.02,3,0);
-    glVertex3f(10.02,3.05,0);
-    glVertex3f(10.02,3.05,-10.02);
+        glNormal3fv(calculate_normal(vertices4[0],vertices4[1],vertices4[2]));
+        for(int x=0;x<4;x++){
+            glVertex3fv(vertices4[x]);
+        }
     glEnd();
     glPopMatrix();
 }
@@ -636,52 +781,68 @@ void atapSegitiga(float flx, float fly, float flz,
                   float brx, float bry, float brz,
                   float blx, float bly, float blz,
                   float midx, float midy, float midz){
+    //atap kiri vertices
+    GLfloat vertices[3][3]=
+    {
+        {flx,fly,flz},
+        {midx,midy,midz},
+        {blx,bly,blz}
+    };
     //atap kiri
-    glColor3f(0.3,0.5,0.6);
     glPushMatrix();
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(flx,fly,flz);
-        glTexCoord2f(0,1);
-        glVertex3f(midx,midy,midz);
-        glTexCoord2f(1,0);
-        glVertex3f(blx,bly,blz);
+        glNormal3fv(calculate_normal(vertices[0],vertices[1],vertices[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices[x]);
+        }
     glEnd();
     glPopMatrix();
+    //atap kanan vertices
+    GLfloat vertices2[3][3]=
+    {
+        {frx,fry,frz},
+        {midx,midy,midz},
+        {brx,bry,brz}
+    };
     //atap kanan
     glPushMatrix();
-    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(frx,fry,frz);
-        glTexCoord2f(0,1);
-        glVertex3f(midx,midy,midz);
-        glTexCoord2f(1,0);
-        glVertex3f(brx,bry,brz);
+        glNormal3fv(calculate_normal(vertices2[0],vertices2[1],vertices2[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices2[x]);
+        }
     glEnd();
     glPopMatrix();
+    //atap belakang vertices
+    GLfloat vertices3[3][3]=
+    {
+        {blx,bly,blz},
+        {midx,midy,midz},
+        {brx,bry,brz}
+    };
     //atap belakang
     glPushMatrix();
-    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(blx,bly,blz);
-        glTexCoord2f(0,1);
-        glVertex3f(midx,midy,midz);
-        glTexCoord2f(1,0);
-        glVertex3f(brx,bry,brz);
+        glNormal3fv(calculate_normal(vertices3[0],vertices3[1],vertices3[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices3[x]);
+        }
     glEnd();
     glPopMatrix();
+    //atap depan vertices
+    GLfloat vertices4[3][3]=
+    {
+        {flx,fly,flz},
+        {midx,midy,midz},
+        {frx,fry,frz}
+    };
     //atap depan
     glPushMatrix();
-    //glColor3f(1,0.5,0.2);
     glBegin(GL_TRIANGLES);
-        glTexCoord2f(0,0);
-        glVertex3f(flx,fly,flz);
-        glTexCoord2f(0,1);
-        glVertex3f(midx,midy,midz);
-        glTexCoord2f(1,0);
-        glVertex3f(frx,fry,frz);
+        glNormal3fv(calculate_normal(vertices4[0],vertices4[1],vertices4[2]));
+        for(int x=0;x<3;x++){
+            glVertex3fv(vertices4[x]);
+        }
     glEnd();
     glPopMatrix();
 }
@@ -840,69 +1001,7 @@ void posisiLampu(float x, float y, float z){
     glutSolidSphere(0.2,100,100);
     glPopMatrix();
 }
-void rumahKeranda(){
-    //tembok kiri
-    glPushMatrix();
-    glTranslatef(0,1,-5);
-    glScalef(0.02,2,5);
-    glBindTexture(GL_TEXTURE_2D, tembok);
-    cube(2);
-    glBindTexture(GL_TEXTURE_2D,-1);
 
-    glPopMatrix();
-    //tembok kanan
-    glPushMatrix();
-    glTranslatef(10,1,-5);
-    glScalef(0.02,2,5);
-    glBindTexture(GL_TEXTURE_2D, tembok);
-    cube(2);
-    glBindTexture(GL_TEXTURE_2D,-1);
-    glPopMatrix();
-    //tembok belakang
-    glPushMatrix();
-    glTranslatef(5,1,-10);
-    glScalef(5,2,0.02);
-    glBindTexture(GL_TEXTURE_2D, tembok);
-    cube(2);
-    glBindTexture(GL_TEXTURE_2D,-1);
-    glPopMatrix();
-    //atap
-    glBindTexture(GL_TEXTURE_2D, atap);
-    atapRumahKeranda(1,0.5,0.2);
-    glBindTexture(GL_TEXTURE_2D,-1);
-
-
-    glPushMatrix();
-    glTranslatef(0,0.05,0);
-    glBindTexture(GL_TEXTURE_2D, atap);
-    atapRumahKeranda2(0.5,0.5,0.2);
-    glBindTexture(GL_TEXTURE_2D,-1);
-    glPopMatrix();
-    tebalAtapKeranda();
-}
-void drawHalfSphere(int scaley, int scalex, GLfloat r) {
-   int i, j;
-   GLfloat v[scalex*scaley][3];
-
-   for (i=0; i<scalex; ++i) {
-     for (j=0; j<scaley; ++j) {
-       v[i*scaley+j][0]=r*cos(j*2*M_PI/scaley)*cos(i*M_PI/(2*scalex));
-       v[i*scaley+j][1]=r*sin(i*M_PI/(2*scalex));
-       v[i*scaley+j][2]=r*sin(j*2*M_PI/scaley)*cos(i*M_PI/(2*scalex));
-     }
-   }
-
-   glBegin(GL_QUADS);
-     for (i=0; i<scalex-1; ++i) {
-       for (j=0; j<scaley; ++j) {
-         glVertex3fv(v[i*scaley+j]);
-         glVertex3fv(v[i*scaley+(j+1)%scaley]);
-         glVertex3fv(v[(i+1)*scaley+(j+1)%scaley]);
-         glVertex3fv(v[(i+1)*scaley+j]);
-       }
-     }
-   glEnd();
- }
 void lingkaran(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat jari_jari, GLfloat detail,
                        GLfloat keutuhan) {
     keutuhan = (keutuhan > 1) ? 1 : keutuhan;
@@ -913,7 +1012,7 @@ void lingkaran(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat jari_jari, GLfl
         GLfloat z = jari_jari * sin((sudut + detail) * M_PI / 180);
         //cout<<x<<" "<<posY<<" "<<z<<endl;
         glColor3ub(128, 64, 0);
-        //glNormal3f(posX + x, posY, posZ + z);
+        glNormal3f(posX + x, posY, posZ + z);
         glVertex3f(posX + x, posY, posZ + z);
         jumlahLooping++;
     }
@@ -934,13 +1033,13 @@ void pipa(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat jari_jari_bawah, GLf
         GLfloat ZsesudahAtas = jari_jari_atas * sin((sudut + detail) * M_PI / 180);
         glBegin(GL_POLYGON);
         glColor3ub(128, 64, 0);
-        //glNormal3f(Xsebelum + posX, posY, Zsebelum + posZ);
+        glNormal3f(Xsebelum + posX, posY, Zsebelum + posZ);
         glVertex3f(Xsebelum + posX, posY, Zsebelum + posZ);
-        //glNormal3f(Xsesudah + posX, posY, Zsesudah + posZ);
+        glNormal3f(Xsesudah + posX, posY, Zsesudah + posZ);
         glVertex3f(Xsesudah + posX, posY, Zsesudah + posZ);
-        //glNormal3f(XsesudahAtas + posX, posY + tinggi, ZsesudahAtas + posZ);
+        glNormal3f(XsesudahAtas + posX, posY + tinggi, ZsesudahAtas + posZ);
         glVertex3f(XsesudahAtas + posX, posY + tinggi, ZsesudahAtas + posZ);
-        //glNormal3f(XsebelumAtas + posX, posY + tinggi, ZsebelumAtas + posZ);
+        glNormal3f(XsebelumAtas + posX, posY + tinggi, ZsebelumAtas + posZ);
         glVertex3f(XsebelumAtas + posX, posY + tinggi, ZsebelumAtas + posZ);
         glEnd();
         Xsebelum = Xsesudah;
@@ -981,7 +1080,7 @@ void tabung(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat jari_jari_bawah, G
         glEnd();
     }
 }
- void lampu(){
+void lampu(){
     glPushMatrix();
     glColor3d(1,0,0);
     glTranslated(3.0,2.3,-6);
@@ -1123,9 +1222,11 @@ void semak (){
     glPushMatrix();
     glTranslatef(0.0, 0.0, 1.0);
 
+
     for(int i =0; i<29; i++)
     {
         glBegin(GL_POLYGON);
+        glNormal3fv(calculate_normal(verticessemak[0],verticessemak[1],verticessemak[2]));
         for (int j=0; j<3; j++)
         {
             glTexCoord2f(1,1);
@@ -2029,80 +2130,156 @@ void balok (){
 glBegin(GL_POLYGON);
 
     glPushMatrix();
-    //depan
-    glBegin(GL_POLYGON);
-        glTexCoord2f(0,0);
-        glVertex3f(-0.5,0.5,0);
-        glTexCoord2f(1,0);
-        glVertex3f(0.5,0.5,0);
-        glTexCoord2f(0,1);
-        glVertex3f(0.5,-0.5,0);
-        glTexCoord2f(1,1);
-        glVertex3f(-0.5,-0.5,0);
-    glEnd();
-    //kanan
 
+    GLfloat vertices[4][3]=
+    {
+        {-0.5,0.5,0},
+        {0.5,0.5,0},
+        {0.5,-0.5,0},
+        {-0.5,-0.5,0}
+    };
+
+    GLfloat vertices2[4][3]=
+    {
+        {0.5,0.5,0},
+        {0.5,0.5,-1},
+        {0.5,-0.5,-1},
+        {0.5,-0.5,0}
+    };
+
+    GLfloat vertices3[4][3]=
+    {
+        {-0.5,0.5,0},
+        {-0.5,0.5,-1},
+        {-0.5,-0.5,-1},
+        {-0.5,-0.5,0}
+    };
+
+    //1 depan
     glBegin(GL_POLYGON);
-        glTexCoord2f(0,0);
-        glVertex3f(0.5,0.5,0);
-        glTexCoord2f(1,0);
-        glVertex3f(0.5,0.5,-1);
-        glTexCoord2f(0,1);
-        glVertex3f(0.5,-0.5,-1);
-        glTexCoord2f(1,1);
-        glVertex3f(0.5,-0.5,0);
+        glNormal3fv(calculate_normal(vertices[0],vertices[1],vertices[2]));
+        for(int x=0;x<4;x++){
+                glTexCoord2fv(textcoord[x]);
+            glVertex3fv(vertices[x]);
+        }
     glEnd();
-    //kiri
+    //2 kanan
     glBegin(GL_POLYGON);
-        glTexCoord2f(0,0);
-        glVertex3f(-0.5,0.5,0);
-        glTexCoord2f(1,0);
-        glVertex3f(-0.5,0.5,-1);
-        glTexCoord2f(0,1);
-        glVertex3f(-0.5,-0.5,-1);
-        glTexCoord2f(1,1);
-        glVertex3f(-0.5,-0.5,0);
+        glNormal3fv(calculate_normal(vertices2[0],vertices2[1],vertices2[2]));
+        for(int x=0;x<4;x++){
+                glTexCoord2fv(textcoord[x]);
+            glVertex3fv(vertices2[x]);
+        }
     glEnd();
-    //belakang
+    //3 kiri
     glBegin(GL_POLYGON);
-        glTexCoord2f(0,0);
-        glVertex3f(-0.5,0.5,-1);
-        glTexCoord2f(1,0);
-        glVertex3f(0.5,0.5,-1);
-        glTexCoord2f(0,1);
-        glVertex3f(0.5,-0.5,-1);
-        glTexCoord2f(1,1);
-        glVertex3f(-0.5,-0.5,-1);
+        glNormal3fv(calculate_normal(vertices3[0],vertices3[1],vertices3[2]));
+        for(int x=0;x<4;x++){
+                glTexCoord2fv(textcoord[x]);
+            glVertex3fv(vertices3[x]);
+        }
     glEnd();
-    //atas
+
+    GLfloat vertices4[4][3]=
+    {
+        {-0.5,0.5,-1},
+        {0.5,0.5,-1},
+        {0.5,-0.5,-1},
+        {-0.5,-0.5,-1}
+    };
+
+    //4 belakang
     glBegin(GL_POLYGON);
-        glTexCoord2f(0,0);
-        glVertex3f(-0.5,0.5,0);
-        glTexCoord2f(1,0);
-        glVertex3f(0.5,0.5,0);
-        glTexCoord2f(0,1);
-        glVertex3f(0.5,0.5,-1);
-        glTexCoord2f(1,1);
-        glVertex3f(-0.5,0.5,-1);
+        glNormal3fv(calculate_normal(vertices4[0],vertices4[1],vertices4[2]));
+        for(int x=0;x<4;x++){
+                glTexCoord2fv(textcoord[x]);
+            glVertex3fv(vertices4[x]);
+        }
     glEnd();
-    //bawah
-        glBegin(GL_POLYGON);
-        glTexCoord2f(0,0);
-        glVertex3f(-0.5,-0.5,0);
-        glTexCoord2f(1,0);
-        glVertex3f(0.5,-0.5,0);
-        glTexCoord2f(0,1);
-        glVertex3f(0.5,-0.5,-1);
-        glTexCoord2f(1,1);
-        glVertex3f(-0.5,-0.5,-1);
+
+    GLfloat vertices5[4][3]=
+    {
+        {-0.5,0.5,0},
+        {0.5,0.5,0},
+        {0.5,0.5,-1},
+        {-0.5,0.5,-1}
+    };
+
+    //5 atas
+    glBegin(GL_POLYGON);
+        glNormal3fv(calculate_normal(vertices5[0],vertices5[1],vertices5[2]));
+        for(int x=0;x<4;x++){
+                glTexCoord2fv(textcoord[x]);
+            glVertex3fv(vertices5[x]);
+        }
+    glEnd();
+
+    GLfloat vertices6[4][3]=
+    {
+        {-0.5,-0.5,0},
+        {0.5,-0.5,0},
+        {0.5,-0.5,-1},
+        {-0.5,-0.5,-1}
+    };
+
+    //6 bawah
+    glBegin(GL_POLYGON);
+        glNormal3fv(calculate_normal(vertices6[0],vertices6[1],vertices6[2]));
+        for(int x=0;x<4;x++){
+                glTexCoord2fv(textcoord[x]);
+            glVertex3fv(vertices6[x]);
+        }
     glEnd();
     glPopMatrix();
 
     glEnd();
 
 }
-void bunga()
-{
+void rumahKeranda(){
+    //tembok kiri
+    glPushMatrix();
+    glColor3f(0,1,0);
+    glTranslatef(-1,0.45,-0.5);
+    glTranslatef(85,0,-85);
+    glScalef(0.25,3.1,9);
+    balok();
+    glPopMatrix();
+    //tembok kanan
+    glPushMatrix();
+    glColor3f(0,1,0);
+    glTranslatef(9,1.45,-0.5);
+    glTranslatef(85,0,-85);
+    glScalef(0.25,3.1,9);
+    balok();
+    glPopMatrix();
+    //tembok belakang
+    glPushMatrix();
+    setMaterialBrass();
+    glColor3f(0,1,0);
+    glTranslatef(9.13,1.45,-9.6);
+    glTranslatef(85,0,-85);
+    glRotatef(90,0,1,0);
+    glScalef(0.25,3.1,8.25);
+    balok();
+    glPopMatrix();
+    //atap
+    glPushMatrix();
+    glTranslatef(85,0,-85);
+    atapRumahKeranda(1,0.5,0.2);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(0,0.05,0);
+    glTranslatef(85,0,-85);
+    atapRumahKeranda2(0.5,0.5,0.2);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(85,0,-85);
+    tebalAtapKeranda();
+    glPopMatrix();
+}
+void bunga(){
     glColor3f(1,1,1);
     //glEnable(GL_TEXTURE_2D);
     //glBindTexture(GL_TEXTURE_2D, -1]);
@@ -2116,130 +2293,189 @@ void bunga()
     glBindTexture(GL_TEXTURE_2D, -1);
     //glDisable(GL_TEXTURE_2D);
 }
+void gerbangKiri(){
+    //badan
+    glPushMatrix();
+    glTranslatef(42,2.5,-0.2);
+    glScalef(2,3,2);
+    //glutSolidCube(1);
+    balok();
+    glPopMatrix();
+
+    //gelang bawah
+    glPushMatrix();
+    glTranslatef(42,0.5,0);
+    glScalef(2.5,1,2.5);
+    balok();
+    glPopMatrix();
+
+    float ty=3.8, tz=0, sty=0.3, stz=-0.15;
+    float sxz=2.5, selisihxz=0.3;
+
+    for(int x=0;x<8;x++ ){
+        glPushMatrix();
+        glTranslatef(42,ty,tz);
+        glScalef(sxz,0.5,sxz);
+        balok();
+        glPopMatrix();
+        sxz-=selisihxz;
+
+        ty+=sty;
+        tz+=stz;
+    }
+}
+void gerbangKanan(){
+    //badan
+    glPushMatrix();
+    glTranslatef(58,2.5,-0.2);
+    glScalef(2,3,2);
+    //glutSolidCube(1);
+    balok();
+    glPopMatrix();
+
+    //gelang bawah
+    glPushMatrix();
+    glTranslatef(58,0.5,0);
+    glScalef(2.5,1,2.5);
+    balok();
+    glPopMatrix();
+
+    float ty=3.8, tz=0, sty=0.3, stz=-0.15;
+    float sxz=2.5, selisihxz=0.3;
+
+    for(int x=0;x<8;x++ ){
+        glPushMatrix();
+        glTranslatef(58,ty,tz);
+        glScalef(sxz,0.5,sxz);
+        balok();
+        glPopMatrix();
+        sxz-=selisihxz;
+
+        ty+=sty;
+        tz+=stz;
+    }
+}
 void trapesium(){
  glBegin(GL_POLYGON);
  glPushMatrix();
     //Sisi depan belakang
-    glBegin(GL_POLYGON);
-        glNormal3f(-2.0, 0.0, -2.0);
-        glTexCoord2f(0,0);
-        glVertex3f(-2.0, 0.0, -2.0);
-        glNormal3f(2.0, 0.0, -2.0);
-        glTexCoord2f(1,0);
-        glVertex3f(2.0, 0.0, -2.0);
-        glNormal3f(2.0, 4.0, -2.0);
-        glTexCoord2f(0,1);
-        glVertex3f(2.0, 4.0, -2.0);
-        glNormal3f(1.0, 4.0, -2.0);
-        glTexCoord2f(0,1);
-        glVertex3f(1.0, 4.0, -2.0);
-        glNormal3f(-2.0, 1.0, -2.0);
-        glTexCoord2f(1,1);
-        glVertex3f(-2.0, 1.0, -2.0);
-    glEnd();
-    glBegin(GL_POLYGON);
-        glNormal3f(-2.0, 0.0, 2.0);
-        glTexCoord2f(0,0);
-        glVertex3f(-2.0, 0.0, 2.0);
-        glNormal3f(2.0, 0.0, 2.0);
-        glTexCoord2f(0,1);
-        glVertex3f(2.0, 0.0, 2.0);
-        glNormal3f(2.0, 4.0, 2.0);
-        glTexCoord2f(1,0);
-        glVertex3f(2.0, 4.0, 2.0);
-        glNormal3f(1.0, 4.0, 2.0);
-        glTexCoord2f(0,1);
-        glVertex3f(1.0, 4.0, 2.0);
-        glNormal3f(-2.0, 1.0, 2.0);
-        glTexCoord2f(1,1);
-        glVertex3f(-2.0, 1.0, 2.0);
-    glEnd();
+    GLfloat vertices[5][3]=
+    {
+        {-2.0, 0.0, -2.0},
+        {2.0, 0.0, -2.0},
+        {2.0, 4.0, -2.0},
+        {1.0, 4.0, -2.0},
+        {-2.0, 1.0, -2.0}
+    };
 
+    GLfloat vertices2[5][3]=
+    {
+        {-2.0, 0.0, 2.0},
+        {2.0, 0.0, 2.0},
+        {2.0, 4.0, 2.0},
+        {1.0, 4.0, 2.0},
+        {-2.0, 1.0, 2.0}
+    };
+
+    GLfloat vertices3[4][3]=
+    {
+        {1.0, 4.0, 2.0},
+        {1.0, 4.0, -2.0},
+        {-2.0, 1.0, -2.0},
+        {-2.0, 1.0, 2.0}
+    };
+
+    GLfloat vertices4[4][3]=
+    {
+        {-2.0, 1.0, 2.0},
+        {-2.0, 1.0, -2.0},
+        {-2.0, 0.0, -2.0},
+        {-2.0, 0.0, 2.0}
+    };
+
+    GLfloat vertices5[4][3]=
+    {
+        {-2.0, 0.0, -2.0},
+        {-2.0, 0.0, 2.0},
+        {2.0, 0.0, 2.0},
+        {2.0, 0.0, -2.0}
+    };
+
+    GLfloat vertices6[4][3]=
+    {
+        {2.0, 0.0, 2.0},
+        {2.0, 0.0, -2.0},
+        {2.0, 4.0, -2.0},
+        {2.0, 4.0, 2.0}
+    };
+
+    GLfloat vertices7[4][3]=
+    {
+        {2.0, 4.0, -2.0},
+        {2.0, 4.0, 2.0},
+        {1.0, 4.0, 2.0},
+        {1.0, 4.0, -2.0}
+    };
+
+    //1
+    glBegin(GL_POLYGON);
+        glNormal3fv(calculate_normal(vertices[0],vertices[1],vertices[2]));
+        for(int x=0;x<5;x++){
+            glVertex3fv(vertices[x]);
+        }
+    glEnd();
+    //2
+    glBegin(GL_POLYGON);
+        glNormal3fv(calculate_normal(vertices2[0],vertices2[1],vertices2[2]));
+        for(int x=0;x<5;x++){
+            glVertex3fv(vertices2[x]);
+        }
+    glEnd();
+    //3
     //Penutup samping
     glBegin(GL_QUADS);
-        glNormal3f(1.0, 4.0, 2.0);
-        glTexCoord2f(0,0);
-        glVertex3f(1.0, 4.0, 2.0);
-        glNormal3f(1.0, 4.0, -2.0);
-        glTexCoord2f(1,0);
-        glVertex3f(1.0, 4.0, -2.0);
-        glNormal3f(-2.0, 1.0, -2.0);
-        glTexCoord2f(0,1);
-        glVertex3f(-2.0, 1.0, -2.0);
-        glNormal3f(-2.0, 1.0, 2.0);
-        glTexCoord2f(1,1);
-        glVertex3f(-2.0, 1.0, 2.0);
+        glNormal3fv(calculate_normal(vertices3[0],vertices3[1],vertices3[2]));
+        for(int x=0;x<4;x++){
+            glVertex3fv(vertices3[x]);
+        }
     glEnd();
-
+    //4
     // Penutup kiri
     glBegin(GL_QUADS);
-        glNormal3f(-2.0, 1.0, 2.0);
-        glTexCoord2f(0,0);
-        glVertex3f(-2.0, 1.0, 2.0);
-        glNormal3f(-2.0, 1.0, -2.0);
-        glTexCoord2f(0,1);
-        glVertex3f(-2.0, 1.0, -2.0);
-        glNormal3f(-2.0, 0.0, -2.0);
-        glTexCoord2f(1,0);
-        glVertex3f(-2.0, 0.0, -2.0);
-        glNormal3f(-2.0, 0.0, 2.0);
-        glTexCoord2f(1,1);
-        glVertex3f(-2.0, 0.0, 2.0);
+        glNormal3fv(calculate_normal(vertices4[0],vertices4[1],vertices4[2]));
+        for(int x=0;x<4;x++){
+            glVertex3fv(vertices4[x]);
+        }
     glEnd();
-
+    //5
     //Penutup Bawah
     glBegin(GL_QUADS);
-        glNormal3f(-2.0, 0.0, -2.0);
-        glTexCoord2f(0,0);
-        glVertex3f(-2.0, 0.0, -2.0);
-        glNormal3f(-2.0, 0.0, 2.0);
-        glTexCoord2f(0,1);
-        glVertex3f(-2.0, 0.0, 2.0);
-        glNormal3f(2.0, 0.0, 2.0);
-        glTexCoord2f(1,0);
-        glVertex3f(2.0, 0.0, 2.0);
-        glNormal3f(2.0, 0.0, -2.0);
-        glTexCoord2f(1,1);
-        glVertex3f(2.0, 0.0, -2.0);
+        glNormal3fv(calculate_normal(vertices5[0],vertices5[1],vertices5[2]));
+        for(int x=0;x<4;x++){
+            glVertex3fv(vertices5[x]);
+        }
     glEnd();
-
+    //6
     //Penutup Kanan
     glBegin(GL_QUADS);
-        glNormal3f(2.0, 0.0, 2.0);
-        glTexCoord2f(0,0);
-        glVertex3f(2.0, 0.0, 2.0);
-        glNormal3f(2.0, 0.0, -2.0);
-        glTexCoord2f(0,1);
-        glVertex3f(2.0, 0.0, -2.0);
-        glNormal3f(2.0, 4.0, -2.0);
-        glTexCoord2f(1,0);
-        glVertex3f(2.0, 4.0, -2.0);
-        glNormal3f(2.0, 4.0, 2.0);
-        glTexCoord2f(1,1);
-        glVertex3f(2.0, 4.0, 2.0);
+        glNormal3fv(calculate_normal(vertices6[0],vertices6[1],vertices6[2]));
+        for(int x=0;x<4;x++){
+            glVertex3fv(vertices6[x]);
+        }
     glEnd();
-
+    //7
     //Penutup Atas
     glBegin(GL_QUADS);
-        glNormal3f(2.0, 4.0, -2.0);
-        glTexCoord2f(0,0);
-        glVertex3f(2.0, 4.0, -2.0);
-        glNormal3f(2.0, 4.0, 2.0);
-        glTexCoord2f(1,0);
-        glVertex3f(2.0, 4.0, 2.0);
-        glNormal3f(1.0, 4.0, 2.0);
-        glTexCoord2f(0,1);
-        glVertex3f(1.0, 4.0, 2.0);
-        glNormal3f(1.0, 4.0, -2.0);
-        glTexCoord2f(1,1);
-        glVertex3f(1.0, 4.0, -2.0);
+        glNormal3fv(calculate_normal(vertices7[0],vertices7[1],vertices7[2]));
+        for(int x=0;x<4;x++){
+            glVertex3fv(vertices7[x]);
+        }
     glEnd();
-
     glPopMatrix();
     glEnd();
 }
-void kuburan()
-{
+void kuburan(){
+
     glPushMatrix();
     glTranslatef(-0.37, 0.2, 0.0);
     glScalef(3.8, 0.5, 1.2);
@@ -2343,9 +2579,7 @@ void sumur()
     glPopMatrix();
 
 }
-
 void alas(){
-
     glPushMatrix();
     glTranslatef(50,-0.165,-50);
     glScalef(100,0.335,100);
@@ -2353,9 +2587,215 @@ void alas(){
     cube(1);
     glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
-
 }
+void keranda(){
+    //papan
+    glPushMatrix();
+    glTranslatef(7,0.96,-2);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glScalef(1.5,0.07,3.5);
+    balok();
+    glPopMatrix();
+    //papan bawah
+    glPushMatrix();
+    glTranslatef(7,0.88,-2);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glScalef(1.4,0.1,3.5);
+    balok();
+    glPopMatrix();
 
+    //pegangan kiri
+    glPushMatrix();
+    glTranslatef(1.25,-4.44,-6.2);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glRotatef(90,1.0, 0.0, 0.0);
+    tabung(5, 0.0, -5.4 , 0.05, 0.05, 5, 6, 1, true, true);
+    glPopMatrix();
+    //pegangan kanan
+    glPushMatrix();
+    glTranslatef(2.75,-4.44,-6.2);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glRotatef(90,1.0, 0.0, 0.0);
+    tabung(5, 0.0, -5.4 , 0.05, 0.05, 5, 6, 1, true, true);
+    glPopMatrix();
+    //kaki kanan belakang
+    glPushMatrix();
+    glTranslatef(0,0.22,0);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    tabung(7.7, 0.0, -5.4 , 0.03, 0.03, 0.7, 6, 1, true, true);
+    glRotated(90, -1.0, 0.0, 0.0);
+    glPopMatrix();
+    //kaki kiri belakang
+    glPushMatrix();
+    glTranslatef(0,0.22,0);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    tabung(6.3, 0.0, -5.4 , 0.03, 0.03, 0.7, 6, 1, true, true);
+    glRotated(90, -1.0, 0.0, 0.0);
+    glPopMatrix();
+    //kaki kanan depan
+    glPushMatrix();
+    glTranslatef(0,0.22,0);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    tabung(7.7, 0.0, -2.1 , 0.03, 0.03, 0.7, 6, 1, true, true);
+    glRotated(90, -1.0, 0.0, 0.0);
+    glPopMatrix();
+    //kaki kiri depan
+    glPushMatrix();
+    glTranslatef(0,0.22,0);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    tabung(6.3, 0.0, -2.1 , 0.03, 0.03, 0.7, 6, 1, true, true);
+    glRotated(90, -1.0, 0.0, 0.0);
+    glPopMatrix();
+    //roda depan kiri
+    glPushMatrix();
+    setMaterialBlackRubber();
+    glTranslatef(6.3,0.11,-2.1);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glRotatef(90, 0.0, 1.0, 0.0);
+	glutSolidTorus(0.05,0.07,10,110);
+    glPopMatrix();
+    //roda depan kanan
+    glPushMatrix();
+    setMaterialBlackRubber();
+    glTranslatef(7.7,0.11,-2.1);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glRotatef(90, 0.0, 1.0, 0.0);
+	glutSolidTorus(0.05,0.07,10,110);
+    glPopMatrix();
+    //roda belakang kanan
+    glPushMatrix();
+    setMaterialBlackRubber();
+    glTranslatef(7.7,0.11,-5.4);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glRotatef(90, 0.0, 1.0, 0.0);
+	glutSolidTorus(0.05,0.07,10,110);
+    glPopMatrix();
+    //roda belakang kiri
+    glPushMatrix();
+    setMaterialBlackRubber();
+    glTranslatef(6.3,0.11,-5.4);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glRotatef(90, 0.0, 1.0, 0.0);
+	glutSolidTorus(0.05,0.07,10,110);
+    glPopMatrix();
+    //ujung depan kiri
+    glPushMatrix();
+    setMaterialBrass();
+    glTranslatef(6.25,0.955,-1.2);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+	glutSolidTorus(0.06,0.01,10,110);
+    glPopMatrix();
+    //ujung belakang kiri
+    glPushMatrix();
+    setMaterialBrass();
+    glTranslatef(6.25,0.955,-6.2);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+	glutSolidTorus(0.06,0.01,10,110);
+    glPopMatrix();
+    //ujung depan kanan
+    glPushMatrix();
+    setMaterialBrass();
+    glTranslatef(7.75,0.955,-1.2);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+	glutSolidTorus(0.06,0.01,10,110);
+    glPopMatrix();
+    //ujung belakang kanan
+    glPushMatrix();
+    setMaterialBrass();
+    glTranslatef(7.75,0.955,-6.2);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+	glutSolidTorus(0.06,0.01,10,110);
+    glPopMatrix();
+    //kotak
+    glPushMatrix();
+    setMaterialijo();
+    glTranslatef(7,1.17,-2);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glScalef(1.14,0.47,3.5);
+    balok();
+    glPopMatrix();
+    //lengkungan
+    glPushMatrix();
+    glTranslatef(2,-4,-5.5);
+    glTranslatef(85,0,-85);
+    glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
+    glRotatef(90,1.0, 0.0, 0.0);
+    tabung(5, 0.0, -5.4 , 0.57, 0.57, 3.5, 6, 1, true, true);
+    glPopMatrix();
+}
+void pocong(){
+    //wajah
+    if(theta2>180){
+        theta2=0;
+    }
+    y=sin(theta2*PI/180.0)*0.7;
+    //cout<<"theta= "<<theta2<<" dan y= "<<y<<endl;
+
+    glPushMatrix();
+    setMaterialhitam();
+    glTranslatef(0,2.3,0.01);
+    glTranslatef(0.0, y, 0.0);
+    glScalef(1,1.1,1);
+    glutSolidSphere(0.3459,50,50);
+    glPopMatrix();
+    //mata kiri
+    glPushMatrix();
+    setMaterialmerah();
+    glTranslatef(0.1,2.35,0.3);
+    glTranslatef(0.0, y, 0.0);
+    glScalef(1,1,1);
+    glutSolidSphere(0.055,50,50);
+    glPopMatrix();
+    //mata kanan
+    glPushMatrix();
+    setMaterialmerah();
+    glTranslatef(-0.1,2.35,0.3);
+    glTranslatef(0.0, y, 0.0);
+    glScalef(1,1,1);
+    glutSolidSphere(0.055,50,50);
+    glPopMatrix();
+    //kepala
+    glPushMatrix();
+    setMaterialputih();
+    glTranslatef(0,2.3,0);
+    glTranslatef(0.0, y, 0.0);
+    glScalef(1,1.1,1);
+    glutSolidSphere(0.35,50,50);
+    glPopMatrix();
+    //kuncup
+    glPushMatrix();
+    setMaterialputih();
+    glTranslatef(0,2.96,0);
+    glTranslatef(0.0, y, 0.0);
+    glRotatef(90,1,0,0);
+    glutSolidCone(0.2,0.3,7,7);
+    glPopMatrix();
+    //badan
+    glPushMatrix();
+    setMaterialputih();
+    glTranslatef(0,1,0);
+    glTranslatef(0.0, y, 0.0);
+    glScalef(0.85,2,1);
+    glutSolidSphere(0.5,50,50);
+    glPopMatrix();
+}
 
 void batang ()
 {
@@ -2485,42 +2925,34 @@ void display(void){
     glLoadIdentity();
 
     camera->Update();
-    /*
     setLighting();
-    // Set material properties
-    setMaterialijo();
-    // built-in (glut library) function , draw you a sphere.
-    bolabola();
-    setMaterialBronze();
-    glPushMatrix();
-    glTranslatef(0, 0, -5);
-    tusuk();
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(5, 0, -5);
-    tusuk();
-    glPopMatrix();
-    glPushMatrix();
-    glTranslatef(-5, 0, -5);
-    tusuk();
-    glPopMatrix();
-    */
-    garis2frontback();
-    garis2leftright();
-//    posisiLampu(5,5,-5);
+ //   posisiLampu(cahayax,cahayay,cahayaz);
 
-
-    //    glPushMatrix();
-//    glTranslatef(15, 1, -10);
-//    posisicabang();
-//    glPopMatrix();
-    /*
     glPushMatrix();
-    glTranslatef(5, 1, -15);
-    glRotatef(90, 0.0, 1.0, 0.0);
-    kuburan();
+    keranda();
     glPopMatrix();
 
+    if((camera->pos.x>87) && (camera->pos.z < -87)){
+    glPushMatrix();
+    glTranslatef(90,0,-87);
+    glRotatef(180,0,1,0);
+    pocong();
+    glPopMatrix();
+    }
+    setmaterialPerl();
+    glPushMatrix();
+    alas();
+    glPopMatrix();
+
+    //garis2frontback();
+    //garis2leftright();
+    //posisiLampu(5,5,-5);
+
+    glPushMatrix();
+    glTranslatef(2,1,0);
+    setMaterialTin();
+    rumahKeranda();
+    glPopMatrix();
 
     glPushMatrix();
     glTranslatef(5, 1, -5);
@@ -2537,18 +2969,18 @@ void display(void){
 
     glPushMatrix();
     glTranslatef(0.5,0,-0.5);
-    tuguPojok2();
+    //tuguPojok2();
     glPopMatrix();
-    pagar();
-
+    //pagar();
     glPushMatrix();
     glTranslatef(42.5,0,0);
+    setmaterialPerl();
     jalan();
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(86,1,-85);
-    rumahKeranda();
+    glTranslatef(5, 0, 5);
+    //lampu();
     glPopMatrix();
 
     glPushMatrix();
@@ -2580,7 +3012,13 @@ void display(void){
     glScalef(0.1,0.1,0.1);
     Pohon();
     glPopMatrix();
+    glPushMatrix();
+    gerbangKiri();
+    glPopMatrix();
 
+    glPushMatrix();
+    gerbangKanan();
+    glPopMatrix();
 
     glPushMatrix();
     psslampu();
@@ -2618,7 +3056,6 @@ void reshape(int w, int h){
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 }
-
 int main(int argc, char **argv){
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
@@ -2629,7 +3066,6 @@ int main(int argc, char **argv){
     glEnable(GL_NORMALIZE);
     glEnable(GL_AUTO_NORMAL);
     glClearColor (0.0, 0.0, 0.0, 1.0);
-
 
     //texture
 	glEnable(GL_TEXTURE_2D);
