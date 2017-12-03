@@ -46,7 +46,11 @@
 		<Unit filename="Vector3.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>
+		<Unit filename="brick.bmp" />
+		<Unit filename="gras.bmp" />
 		<Unit filename="main.cpp" />
+		<Unit filename="metaltex.bmp" />
+		<Unit filename="wooden.bmp" />
 		<Extensions>
 			<code_completion />
 			<envvars />

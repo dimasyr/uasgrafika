@@ -1,25 +1,4 @@
 # depslib dependency file v1.0
-1510563299 source:d:\grafika komputer\tugasshading\camera.cpp
-	<math.h>
-	<windows.h>
-	<gl/Gl.h>
-	"Camera.h"
-
-1510562824 d:\grafika komputer\tugasshading\camera.h
-	<windows.h>
-	<gl\Gl.h>
-	<gl\glu.h>
-	"Vector3.h"
-
-1510562880 d:\grafika komputer\tugasshading\vector3.h
-	<math.h>
-
-1511522607 source:d:\grafika komputer\tugasshading\main.cpp
-	<iostream>
-	<GL/glut.h>
-	"Camera.h"
-	<math.h>
-
 1510918064 source:d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\camera.cpp
 	<math.h>
 	<windows.h>
@@ -35,9 +14,10 @@
 1510918064 d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\vector3.h
 	<math.h>
 
-1511530595 source:d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\main.cpp
+1512307432 source:d:\kuliah\materi\semester 5\grafika komputer\uas\kuburan\uasgrafika\main.cpp
 	<iostream>
 	<GL/glut.h>
 	"Camera.h"
 	<math.h>
+	<cstdio>
 
