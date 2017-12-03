@@ -2238,29 +2238,28 @@ glBegin(GL_POLYGON);
 void rumahKeranda(){
     //tembok kiri
     glPushMatrix();
-    glColor3f(0,1,0);
-    glTranslatef(-1,0.45,-0.5);
+    glTranslatef(1,1.5,-5.1);
     glTranslatef(85,0,-85);
-    glScalef(0.25,3.1,9);
-    balok();
+    glScalef(0.25,3.1,8.9);
+    cube(1);
     glPopMatrix();
+
     //tembok kanan
     glPushMatrix();
-    glColor3f(0,1,0);
-    glTranslatef(9,1.45,-0.5);
+    glTranslatef(9,1.5,-5.1);
     glTranslatef(85,0,-85);
-    glScalef(0.25,3.1,9);
-    balok();
+    glScalef(0.25,3.1,8.9);
+    cube(1);
     glPopMatrix();
+
     //tembok belakang
     glPushMatrix();
     setMaterialBrass();
-    glColor3f(0,1,0);
-    glTranslatef(9.13,1.45,-9.6);
+    glTranslatef(5,1.5,-9.66);
     glTranslatef(85,0,-85);
     glRotatef(90,0,1,0);
     glScalef(0.25,3.1,8.25);
-    balok();
+    cube(1);
     glPopMatrix();
     //atap
     glPushMatrix();
@@ -2939,6 +2938,7 @@ void display(void){
     pocong();
     glPopMatrix();
     }
+
     setmaterialPerl();
     glPushMatrix();
     alas();
@@ -2949,7 +2949,6 @@ void display(void){
     //posisiLampu(5,5,-5);
 
     glPushMatrix();
-    glTranslatef(2,1,0);
     setMaterialTin();
     rumahKeranda();
     glPopMatrix();
@@ -2957,14 +2956,12 @@ void display(void){
     glPushMatrix();
     glTranslatef(5, 1, -5);
     glScalef(0.2,0.1,0.2);
-    bunga();
+    //bunga();
     glPopMatrix();
-    */
-
 
     glPushMatrix();
     glTranslatef(0,0,0);
-    pss();
+    //pss();
     glPopMatrix();
 
     glPushMatrix();
@@ -2975,7 +2972,7 @@ void display(void){
     glPushMatrix();
     glTranslatef(42.5,0,0);
     setmaterialPerl();
-    jalan();
+    //jalan();
     glPopMatrix();
 
     glPushMatrix();
