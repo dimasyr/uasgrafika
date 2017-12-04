@@ -34,6 +34,7 @@ GLuint nisan;
 GLuint kayu;
 GLuint daun;
 GLuint silver;
+GLuint rust;
 
 GLUquadricObj *p = gluNewQuadric();
 
@@ -416,7 +417,7 @@ void setLighting(){
     // Enable lighting
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
-    glEnable(GL_LIGHT1);
+    //glEnable(GL_LIGHT1);
 }
 void setMaterialijo(){
     glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, qaGreen);
@@ -1288,10 +1289,10 @@ void lingkarsumur (){
     glPushMatrix();
     glPushMatrix();
     glColor3f(0.8, 0.8, 0.8);
-    pillarMenara(0.0, 0.0, -5.0, 1, 1, 1,10, sumurtxt, 1, 90);
+    pillarMenara(0.0, 0.0, -5.0, 1, 1, 1,100, sumurtxt, 1, 0);
     glColor3f(0.4, 0.8, 0.8);
-    pillarMenara(0.0, 1, -5.0, 0, 1, 1.5, 10, sumurtxt, 1, 90);
-    pillarMenara(0.0, 0.0, -5.0, 1, 1.5, 1.5, 10, sumurtxt, 1, 90);
+    pillarMenara(0.0, 1, -5.0, 0, 1, 1.5, 100, sumurtxt, 1, 0);
+    pillarMenara(0.0, 0.0, -5.0, 1, 1.5, 1.5, 100, sumurtxt, 1, 0);
     glPopMatrix();
 
     glPushMatrix();
@@ -2770,11 +2771,11 @@ void sumur()
     glPushMatrix();
     glRotatef(90, 1.0, 0.0, 0.0);
 
-//    glPushMatrix();
-//    glRotatef(90, 0.0, 0.0, 1.0);
-//    pillarMenara(-4.9, -1.9, -4.1 , 4.0, 0.06, 0.06, 10,-1,1, 90);
-//
-//    glPopMatrix();
+    glPushMatrix();
+    glRotatef(90, 0.0, 0.0, 1.0);
+    pillarMenara(-4.9, -1.9, -4.1 , 4.0, 0.06, 0.06, 10,rust,1, 90);
+
+    glPopMatrix();
 
     glPopMatrix();
 
@@ -3389,6 +3390,7 @@ int main(int argc, char **argv){
 	silver = loadBmpFile("silver.bmp");
 	air = loadBmpFile("air.bmp");
 	black = loadBmpFile("black.bmp");
+	rust = loadBmpFile("rust.bmp");
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
