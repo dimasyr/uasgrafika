@@ -162,6 +162,7 @@ float *calculate_normal(float *a, float *b, float *c){
 
     float *result=cross_product(x,y);
 
+
     return result;
 }
 void pillarMenara(float posisiX, float posisiY, float posisiZ, float tinggi, float lebarBawah, float lebarAtas, float texture, GLint texture_id, int detail, float derajadY){
