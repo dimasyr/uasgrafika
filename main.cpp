@@ -12,6 +12,8 @@ using namespace std;
 
 //float posCamx=0, posCamy=0, posCamz=5, lookCamx=0, lookCamy=0, lookCamz=0;
 
+GLuint black;
+GLuint air;
 GLuint tanah;
 GLuint pohontxt;
 GLuint bungatxt;
@@ -160,6 +162,71 @@ float *calculate_normal(float *a, float *b, float *c){
     float *result=cross_product(x,y);
 
     return result;
+}
+void pillarMenara(float posisiX, float posisiY, float posisiZ, float tinggi, float lebarBawah, float lebarAtas, float texture, GLint texture_id, int detail, float derajadY){
+glPushMatrix();
+glTranslatef(posisiX, posisiY, posisiZ);
+glRotatef(derajadY, 0,1,0);
+    float oldX, oldY, oldZ, oldX1, oldY1, oldZ1, X, Y, Z, X1, Y1, Z1;
+    oldX=lebarBawah*cos(0* PI / 180.0);
+    oldZ=lebarBawah*sin(0* PI / 180.0);
+    oldX1=lebarAtas*cos(0* PI / 180.0);
+    oldZ1=lebarAtas*sin(0* PI / 180.0);
+
+        X=lebarBawah*cos(0* PI / 180.0);
+        Z=lebarBawah*sin(0* PI / 180.0);
+        X1=lebarAtas*cos(0* PI / 180.0);
+        Z1=lebarAtas*sin(0* PI / 180.0);
+
+        float sizeX, sizeY, texX=0, texY=0;
+
+        sizeY=abs(sqrt(pow((X+posisiX)-(oldX+posisiX),2)+pow(abs((posisiY+tinggi)-(posisiY)),2)));
+
+glBindTexture(GL_TEXTURE_2D, texture_id);
+    for(int i=0; i<=360; i+=detail){
+        X=lebarBawah*cos(i* PI / 180.0);
+        Z=lebarBawah*sin(i* PI / 180.0);
+        X1=lebarAtas*cos(i* PI / 180.0);
+        Z1=lebarAtas*sin(i* PI / 180.0);
+
+
+
+        GLfloat vertices[4][3]=
+        {
+            {oldX, 0, oldZ},
+            {oldX1, tinggi, oldZ1},
+            {X1, tinggi, Z1},
+            {X, 0, Z}
+        };
+
+
+
+        glBegin(GL_POLYGON);
+        glNormal3fv(calculate_normal(vertices[0], vertices[1], vertices[2]));
+        sizeX=abs(sqrt(pow(abs((X+posisiX)-(oldX+posisiX)),2)+pow(abs((Z+posisiZ)-(oldZ+posisiZ)),2)));
+
+                glTexCoord2f(texX/texture, texY/texture);
+                //cout<<"awal "<<(texX+sizeX)/texture<<endl;
+                glVertex3fv(vertices[0]);
+                glTexCoord2f((texX)/texture, (texY+sizeY)/texture);
+
+                glVertex3fv(vertices[1]);
+                glTexCoord2f((texX+sizeX)/texture, (texY+sizeY)/texture);
+                glVertex3fv(vertices[2]);
+
+                //cout<<"akhir "<<texX/texture<<endl;
+                glTexCoord2f((texX+sizeX)/texture, texY/texture);
+                glVertex3fv(vertices[3]);
+            //}
+        glEnd();
+
+        oldX=X;
+        oldZ=Z;
+        oldX1=X1;
+        oldZ1=Z1;
+        texX+=sizeX;
+    }
+    glPopMatrix();
 }
 void alaskubus(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat panjang, GLfloat lebar, GLfloat tinggi,
                   GLfloat texture_scale) {
@@ -1085,44 +1152,44 @@ void posisiLampu(float x, float y, float z){
 }
 
 void lingkaran(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat jari_jari, GLfloat detail,
-                       GLfloat keutuhan) {
+                      GLfloat keutuhan, GLfloat texture_scale) {
     keutuhan = (keutuhan > 1) ? 1 : keutuhan;
     glBegin(GL_POLYGON);
-    int jumlahLooping = 0;
-    for (GLfloat sudut = -detail; sudut <= 360 * keutuhan; sudut += detail) {
+    for (GLfloat sudut = -detail; sudut < 360 * keutuhan; sudut += detail) {
         GLfloat x = jari_jari * cos((sudut + detail) * M_PI / 180);
         GLfloat z = jari_jari * sin((sudut + detail) * M_PI / 180);
-        //cout<<x<<" "<<posY<<" "<<z<<endl;
-        glColor3ub(128, 64, 0);
         glNormal3f(posX + x, posY, posZ + z);
+        glTexCoord2f(x / texture_scale, z / texture_scale);
         glVertex3f(posX + x, posY, posZ + z);
-        jumlahLooping++;
     }
     glEnd();
 }
 void pipa(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat jari_jari_bawah, GLfloat jari_jari_atas, GLfloat tinggi,
-             GLfloat detail, GLfloat keutuhan) {
+            GLfloat detail, GLfloat keutuhan, GLfloat texture_scale) {
     keutuhan = (keutuhan > 1) ? 1 : keutuhan;
     GLfloat Xsebelum = jari_jari_bawah;
     GLfloat Zsebelum = 0;
     int jumlahLooping = 0;
-    for (GLfloat sudut = 0; sudut <= 360 * keutuhan; sudut += detail) {
+    for (GLfloat sudut = 0; sudut < 360 * keutuhan; sudut += detail) {
         GLfloat XsebelumAtas = jari_jari_atas * cos((sudut) * M_PI / 180);
         GLfloat ZsebelumAtas = jari_jari_atas * sin((sudut) * M_PI / 180);
         GLfloat Xsesudah = jari_jari_bawah * cos((sudut + detail) * M_PI / 180);
         GLfloat Zsesudah = jari_jari_bawah * sin((sudut + detail) * M_PI / 180);
         GLfloat XsesudahAtas = jari_jari_atas * cos((sudut + detail) * M_PI / 180);
         GLfloat ZsesudahAtas = jari_jari_atas * sin((sudut + detail) * M_PI / 180);
+        GLfloat vertices[][3] = {
+                {Xsebelum + posX,     posY,          Zsebelum + posZ},
+                {Xsesudah + posX,     posY,          Zsesudah + posZ},
+                {XsesudahAtas + posX, posY + tinggi, ZsesudahAtas + posZ},
+                {XsebelumAtas + posX, posY + tinggi, ZsebelumAtas + posZ}
+        };
+
         glBegin(GL_POLYGON);
-        glColor3ub(128, 64, 0);
-        glNormal3f(Xsebelum + posX, posY, Zsebelum + posZ);
-        glVertex3f(Xsebelum + posX, posY, Zsebelum + posZ);
-        glNormal3f(Xsesudah + posX, posY, Zsesudah + posZ);
-        glVertex3f(Xsesudah + posX, posY, Zsesudah + posZ);
-        glNormal3f(XsesudahAtas + posX, posY + tinggi, ZsesudahAtas + posZ);
-        glVertex3f(XsesudahAtas + posX, posY + tinggi, ZsesudahAtas + posZ);
-        glNormal3f(XsebelumAtas + posX, posY + tinggi, ZsebelumAtas + posZ);
-        glVertex3f(XsebelumAtas + posX, posY + tinggi, ZsebelumAtas + posZ);
+        glNormal3fv(calculate_normal(vertices[0], vertices[1], vertices[2]));
+        for (int i = 0; i < 4; ++i) {
+            glTexCoord2f(vertices[i][0] / texture_scale, vertices[i][1] / texture_scale);
+            glVertex3fv(vertices[i]);
+        }
         glEnd();
         Xsebelum = Xsesudah;
         Zsebelum = Zsesudah;
@@ -1130,35 +1197,33 @@ void pipa(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat jari_jari_bawah, GLf
     }
 }
 void tabung(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat jari_jari_bawah, GLfloat jari_jari_atas,
-               GLfloat tinggi, GLfloat detail, GLfloat keutuhan, bool tutup_atas, bool tutup_bawah) {
+              GLfloat tinggi, GLfloat detail, GLfloat keutuhan, bool tutup_atas, bool tutup_bawah,
+              GLfloat texture_scale) {
     if (tutup_atas)
-        lingkaran(posX, posY + tinggi, posZ, jari_jari_atas, detail, keutuhan);
+        lingkaran(posX, posY + tinggi, posZ, jari_jari_atas, detail, keutuhan, texture_scale);
 
-    pipa(posX, posY, posZ, jari_jari_bawah, jari_jari_atas, tinggi, detail, keutuhan);
+    pipa(posX, posY, posZ, jari_jari_bawah, jari_jari_atas, tinggi, detail, keutuhan, texture_scale);
 
     if (tutup_bawah)
-        lingkaran(posX, posY, posZ, jari_jari_bawah, detail, keutuhan);
+        lingkaran(posX, posY, posZ, jari_jari_bawah, detail, keutuhan, texture_scale);
 
     if (keutuhan < 1) {
+        GLfloat vertices[][3] = {
+                {posX + jari_jari_bawah, posY,          posZ},
+                {posX + (jari_jari_bawah * cos(360 * keutuhan * M_PI / 180)), posY, posZ + (jari_jari_bawah *sin(360 *keutuhan *M_PI / 180))},
+                {posX + (jari_jari_atas * cos(360 * keutuhan * M_PI / 180)),  posY + tinggi,
+                                                                                             posZ + (jari_jari_atas *
+                                                                                                     sin(360 *
+                                                                                                         keutuhan *
+                                                                                                         M_PI / 180))},
+                {posX + jari_jari_atas,                                       posY + tinggi, posZ}
+        };
         glBegin(GL_POLYGON);
-        glColor3ub(125, 167, 200);
-        glNormal3f(posX + jari_jari_bawah, posY, posZ);
-        glTexCoord2f(0,0);
-        glVertex3f(posX + jari_jari_bawah, posY, posZ);
-        glColor3ub(50, 69, 100);
-        glNormal3f(posX + (jari_jari_bawah * cos(360 * keutuhan * M_PI / 180)), posY,posZ + (jari_jari_bawah * sin(360 * keutuhan * M_PI / 180)));
-        glTexCoord2f(1,0);
-        glVertex3f(posX + (jari_jari_bawah * cos(360 * keutuhan * M_PI / 180)), posY,
-                   posZ + (jari_jari_bawah * sin(360 * keutuhan * M_PI / 180)));
-        glColor3ub(125, 167, 200);
-        glNormal3f(posX + (jari_jari_atas * cos(360 * keutuhan * M_PI / 180)), posY + tinggi, posZ + (jari_jari_atas * sin(360 * keutuhan * M_PI / 180)));
-        glTexCoord2f(1,1);
-        glVertex3f(posX + (jari_jari_atas * cos(360 * keutuhan * M_PI / 180)), posY + tinggi,
-                   posZ + (jari_jari_atas * sin(360 * keutuhan * M_PI / 180)));
-        glColor3ub(50, 69, 100);
-        glNormal3f(posX + jari_jari_atas, posY + tinggi, posZ);
-        glTexCoord2f(0,1);
-        glVertex3f(posX + jari_jari_atas, posY + tinggi, posZ);
+        glNormal3fv(calculate_normal(vertices[0], vertices[1], vertices[2]));
+        for (int i = 0; i < 4; ++i) {
+            glTexCoord2f(vertices[i][0] / texture_scale, vertices[i][1] / texture_scale);
+            glVertex3fv(vertices[i]);
+        }
         glEnd();
     }
 }
@@ -1187,8 +1252,8 @@ void lampu(){
 
     glPushMatrix();
     glColor3f(1,1,1);
-    glBindTexture(GL_TEXTURE_2D, kuburantxt);
-    tabung(3.0, 0.0, -6, 0.07, 0.07, 2.0, 6, 1, true, true);
+    glBindTexture(GL_TEXTURE_2D, black);
+    tabung(3.0, 0.0, -6, 0.07, 0.07, 2.0, 6, 1, true, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glRotated(90, -1.0, 0.0, 0.0);
 
@@ -1202,8 +1267,8 @@ void lampu(){
 
     glPushMatrix();
     glColor3f(1,1,0);
-    glBindTexture(GL_TEXTURE_2D, silver);
-    tabung(3.0, 0.0, -6, 0.3, 0.3, 0.2, 6, 1, true, true);
+    glBindTexture(GL_TEXTURE_2D, black);
+    tabung(3.0, 0.0, -6, 0.3, 0.3, 0.2, 6, 1, true, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glRotated(90, -1.0, 0.0, 0.0);
     glPopMatrix();
@@ -1218,53 +1283,22 @@ void jalan(){
 	glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
 }
-void tabungtebal(float posisiX, float posisiY, float posisiZ, float tinggi, float lebarBawah, float lebarAtas){
 
-    float oldX, oldY, oldZ, oldX1, oldY1, oldZ1, X, Y, Z, X1, Y1, Z1;
-    oldX=lebarBawah*cos(0* PI / 180.0);
-    oldZ=lebarBawah*sin(0* PI / 180.0);
-    oldX1=lebarAtas*cos(0* PI / 180.0);
-    oldZ1=lebarAtas*sin(0* PI / 180.0);
-
-    for(int i=0; i<=360; i++){
-        X=lebarBawah*cos(i* PI / 180.0);
-        Z=lebarBawah*sin(i* PI / 180.0);
-        X1=lebarAtas*cos(i* PI / 180.0);
-        Z1=lebarAtas*sin(i* PI / 180.0);
-        glBegin(GL_POLYGON);
-
-        glNormal3f(oldX+posisiX, posisiY, oldZ+posisiZ);
-        glTexCoord2f(1,0);
-        glVertex3f(oldX+posisiX, posisiY, oldZ+posisiZ);
-        glNormal3f(oldX1+posisiX, posisiY+tinggi, oldZ1+posisiZ);
-        glTexCoord2f(0,0);
-        glVertex3f(oldX1+posisiX, posisiY+tinggi, oldZ1+posisiZ);
-        glNormal3f(X1+posisiX, posisiY+tinggi, Z1+posisiZ);
-        glTexCoord2f(0,1);
-        glVertex3f(X1+posisiX, posisiY+tinggi, Z1+posisiZ);
-        glNormal3f(X+posisiX, posisiY, Z+posisiZ);
-        glTexCoord2f(1,1);
-        glVertex3f(X+posisiX, posisiY, Z+posisiZ);
-        glEnd();
-        oldX=X;
-        oldZ=Z;
-        oldX1=X1;
-        oldZ1=Z1;
-    }
-}
 void lingkarsumur (){
     glPushMatrix();
     glPushMatrix();
     glColor3f(0.8, 0.8, 0.8);
-    tabungtebal(0.0, 0.0, -5.0, 1, 1, 1);
+    pillarMenara(0.0, 0.0, -5.0, 1, 1, 1,10, sumurtxt, 1, 90);
     glColor3f(0.4, 0.8, 0.8);
-    tabungtebal(0.0, 1, -5.0, 0, 1, 1.5);
-    tabungtebal(0.0, 0.0, -5.0, 1, 1.5, 1.5);
+    pillarMenara(0.0, 1, -5.0, 0, 1, 1.5, 10, sumurtxt, 1, 90);
+    pillarMenara(0.0, 0.0, -5.0, 1, 1.5, 1.5, 10, sumurtxt, 1, 90);
     glPopMatrix();
 
     glPushMatrix();
     glTranslatef(0,0,0);
-    lingkaran(0.0, 0.5, -5.0, 1, 6, 1);
+    glBindTexture(GL_TEXTURE_2D, air);
+    lingkaran(0.0, 0.5, -5.0, 1, 6, 1, 1);
+    glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
 
     glPopMatrix();
@@ -2289,7 +2323,7 @@ glBegin(GL_POLYGON);
         {0.5,0.5,-1},
         {0.5,-0.5,-1},
         {-0.5,-0.5,-1}
-    };glBindTexture(GL_TEXTURE_2D, bungatxt);
+    };
 
     //4 belakang
     glBegin(GL_POLYGON);
@@ -2394,7 +2428,7 @@ void rumahKeranda(){
     //tali
     glPushMatrix();
     glTranslatef(85,0,-85);
-    tabung(5, 3.5, -5, 0.03, 0.03, 1.5, 6, 1, true, true);
+    tabung(5, 3.5, -5, 0.03, 0.03, 1.5, 6, 1, true, true, 10);
     glPopMatrix();
 
     //vitingan
@@ -2696,14 +2730,14 @@ void timba ()
 {
     //tabung(10.0, 1.2, -8.6, 0.3, 0.5, 0.7, 6, 1, false, true);
     glBindTexture(GL_TEXTURE_2D, timbatxt);
-    tabung(5.0, 0, -5, 0.6, 1, 1.5, 6, 1, false, true);
+    tabung(5.0, 0, -5, 0.6, 1, 1.5, 6, 1, false, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
 
     glPushMatrix();
     //glColor3f(1.0, 0.0, 0.0);
     glRotatef(90, 0.0, 0.0, 1.0);
-    tabung(1.45, -4.1, -5, 0.1, 0.1, 0.2, 6, 1, false, true);
-    tabung(1.45, -6.1, -5, 0.1, 0.1, 0.2, 6, 1, false, true);
+    tabung(1.45, -4.1, -5, 0.1, 0.1, 0.2, 6, 1, false, true, 10);
+    tabung(1.45, -6.1, -5, 0.1, 0.1, 0.2, 6, 1, false, true, 10);
     glPopMatrix();
 
     glPushMatrix();
@@ -2736,11 +2770,11 @@ void sumur()
     glPushMatrix();
     glRotatef(90, 1.0, 0.0, 0.0);
 
-    glPushMatrix();
-    glRotatef(90, 0.0, 0.0, 1.0);
-    tabungtebal(-4.9, -1.9, -4.1 , 4.0, 0.06, 0.06);
-
-    glPopMatrix();
+//    glPushMatrix();
+//    glRotatef(90, 0.0, 0.0, 1.0);
+//    pillarMenara(-4.9, -1.9, -4.1 , 4.0, 0.06, 0.06, 10,-1,1, 90);
+//
+//    glPopMatrix();
 
     glPopMatrix();
 
@@ -2805,7 +2839,7 @@ void keranda(){
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glRotatef(90,1.0, 0.0, 0.0);
     glBindTexture(GL_TEXTURE_2D, silver);
-    tabung(5, 0.0, -5.4 , 0.05, 0.05, 5, 6, 1, true, true);
+    tabung(5, 0.0, -5.4 , 0.05, 0.05, 5, 6, 1, true, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //pegangan kanan
@@ -2815,7 +2849,7 @@ void keranda(){
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glRotatef(90,1.0, 0.0, 0.0);
     glBindTexture(GL_TEXTURE_2D, silver);
-    tabung(5, 0.0, -5.4 , 0.05, 0.05, 5, 6, 1, true, true);
+    tabung(5, 0.0, -5.4 , 0.05, 0.05, 5, 6, 1, true, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //kaki kanan belakang
@@ -2824,7 +2858,7 @@ void keranda(){
     glTranslatef(85,0,-85);
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glBindTexture(GL_TEXTURE_2D, silver);
-    tabung(7.7, 0.0, -5.4 , 0.03, 0.03, 0.7, 6, 1, true, true);
+    tabung(7.7, 0.0, -5.4 , 0.03, 0.03, 0.7, 6, 1, true, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glRotated(90, -1.0, 0.0, 0.0);
     glPopMatrix();
@@ -2834,7 +2868,7 @@ void keranda(){
     glTranslatef(85,0,-85);
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glBindTexture(GL_TEXTURE_2D, silver);
-    tabung(6.3, 0.0, -5.4 , 0.03, 0.03, 0.7, 6, 1, true, true);
+    tabung(6.3, 0.0, -5.4 , 0.03, 0.03, 0.7, 6, 1, true, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glRotated(90, -1.0, 0.0, 0.0);
     glPopMatrix();
@@ -2844,7 +2878,7 @@ void keranda(){
     glTranslatef(85,0,-85);
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glBindTexture(GL_TEXTURE_2D, silver);
-    tabung(7.7, 0.0, -2.1 , 0.03, 0.03, 0.7, 6, 1, true, true);
+    tabung(7.7, 0.0, -2.1 , 0.03, 0.03, 0.7, 6, 1, true, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glRotated(90, -1.0, 0.0, 0.0);
     glPopMatrix();
@@ -2854,7 +2888,7 @@ void keranda(){
     glTranslatef(85,0,-85);
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glBindTexture(GL_TEXTURE_2D, silver);
-    tabung(6.3, 0.0, -2.1 , 0.03, 0.03, 0.7, 6, 1, true, true);
+    tabung(6.3, 0.0, -2.1 , 0.03, 0.03, 0.7, 6, 1, true, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glRotated(90, -1.0, 0.0, 0.0);
     glPopMatrix();
@@ -2946,7 +2980,7 @@ void keranda(){
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glRotatef(90,1.0, 0.0, 0.0);
     glBindTexture(GL_TEXTURE_2D, backijo);
-    tabung(5, 0.0, -5.6 , 0.57, 0.57, 3.479, 6, 1, true, true);
+    tabung(5, 0.0, -5.6 , 0.57, 0.57, 3.479, 6, 1, true, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //tulisan kiri
@@ -3187,7 +3221,7 @@ void display(void){
 
     //setmaterialPerl();
 
-    /*
+
     glPushMatrix();
     alas();
     glPopMatrix();
@@ -3201,10 +3235,10 @@ void display(void){
     rumahKeranda();
     glPopMatrix();
 
-    glPushMatrix();
-    glColor3f(0.0, 1.0, 0.0);
-    bunga();
-    glPopMatrix();
+//    glPushMatrix();
+//    glColor3f(0.0, 1.0, 0.0);
+//    bunga();
+//    glPopMatrix();
 
     glPushMatrix();
     glTranslatef(0,0,0);
@@ -3290,12 +3324,6 @@ void display(void){
     psslampu();
     glPopMatrix();
 
-    */
-
-    glPushMatrix();
-    glTranslatef(5, 0, -5);
-    sumur();
-    glPopMatrix();
 
 
     // Flush buffers to screen
@@ -3358,7 +3386,9 @@ int main(int argc, char **argv){
 	nisan = loadBmpFile("nisan.bmp");
 	kayu = loadBmpFile("pohon3.bmp");
 	daun = loadBmpFile("merah.bmp");
-	//silver = loadBmpFile("keranda.bmp");
+	silver = loadBmpFile("silver.bmp");
+	air = loadBmpFile("air.bmp");
+	black = loadBmpFile("black.bmp");
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
