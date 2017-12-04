@@ -47,9 +47,9 @@ GLfloat qaWhite[] = {1.0, 1.0, 1.0, 1.0}; //White Color
 GLfloat qaRed[] = {1.0, 0.0, 0.0, 1.0}; //White Color
 //GLfloat letakCahaya[][]
 
-float cahayax=0.0, cahayay=2.0, cahayaz=3.0;
-static GLdouble viewer[]= {0.0, 0.0, 10.0};
-static GLfloat theta = 0.0, speed = 0.15, speed2 = 0.35, theta2= 0.0;
+float cahayax=5.0, cahayay=4.0, cahayaz=-3.0;
+//static GLdouble viewer[]= {0.0, 0.0, 10.0};
+static GLfloat theta = 0.0, speed = 0.55, speed2 = 2.35, theta2= 0.0;
 float y=0;
 Camera*	camera;
 
@@ -370,19 +370,19 @@ void idleFunc(void){
     }
 
     if(theta2<=40){
-        speed2 = 1.00;
+        speed2 = 3.00;
     }
     else if((theta2 >40) && (theta2 <70) ){
-        speed2 = 0.75;
+        speed2 = 3.75;
     }
     else if((theta2 > 70) && (theta2 <110)){
-        speed2 = 0.45;
+        speed2 = 3.45;
     }
     else if((theta2>110) && (theta2 <140)){
-        speed2 = 0.75;
+        speed2 = 3.75;
     }
     else if((theta2>140) && (theta2 <=180)){
-        speed2 = 1.00;
+        speed2 = 3.00;
     }
 
 //    theta2 += sin //theta = theta + speed
@@ -526,13 +526,6 @@ float shine = 76.0f;
 void keys(unsigned char key, int x, int y){
 
 ///* Use x, X, y, Y, z, and Z keys to move viewer */
-//
-//   if(key == 'x') viewer[0]-= 1.0;
-//   if(key == 'X') viewer[0]+= 1.0;
-//   if(key == 'y') viewer[1]-= 1.0;
-//   if(key == 'Y') viewer[1]+= 1.0;
-//   if(key == 'z') viewer[2]-= 1.0;
-//   if(key == 'Z') viewer[2]+= 1.0;
 
 switch( key )
     {
@@ -585,8 +578,6 @@ switch( key )
 
 //   if(key == 'b' || key == 'B') spin = !spin;
 
-   if(key == '-') speed-= 0.05;
-   if(key == '+') speed+= 0.05;
 
 /*
    if(key == '1') LightPosition[0]-= 20.0f;
@@ -1245,6 +1236,11 @@ void tulisan(){
 }
 void lampu(){
     glPushMatrix();
+    glColor3f(1,1,1);
+    tabung(3.0, 0.0, -6, 0.3, 0.2, 0.4, 6, 1, true, true, 10);
+    glPopMatrix();
+
+    glPushMatrix();
     glColor3d(1,0,0);
     glTranslated(3.0,2.3,-6);
     glRotated(90.0, 1.0, 0.0, 0.0);
@@ -1265,15 +1261,8 @@ void lampu(){
     glTranslatef(3.0,2.54,-6);
     glutSolidSphere(0.5,25,25);
     glPopMatrix();
-
-    glPushMatrix();
-    glColor3f(1,1,0);
-    glBindTexture(GL_TEXTURE_2D, black);
-    tabung(3.0, 0.0, -6, 0.3, 0.3, 0.2, 6, 1, true, true, 10);
-    glBindTexture(GL_TEXTURE_2D, -1);
-    glRotated(90, -1.0, 0.0, 0.0);
-    glPopMatrix();
  }
+
 void jalan(){
     glPushMatrix();
     //glTranslatef(7.5, 0.0, -49.75);
@@ -2764,13 +2753,14 @@ void timba ()
 
 void sumur()
 {
+    glPushMatrix();
     glBindTexture(GL_TEXTURE_2D, sumurtxt);
     lingkarsumur();
     glBindTexture(GL_TEXTURE_2D, -1);
-
+    glPopMatrix();
     glPushMatrix();
-    glRotatef(90, 1.0, 0.0, 0.0);
 
+    glRotatef(90, 1.0, 0.0, 0.0);
     glPushMatrix();
     glRotatef(90, 0.0, 0.0, 1.0);
     pillarMenara(-4.9, -1.9, -4.1 , 4.0, 0.06, 0.06, 10,rust,1, 90);
@@ -3200,8 +3190,9 @@ void display(void){
     glLoadIdentity();
 
     camera->Update();
+
     setLighting();
- //   posisiLampu(cahayax,cahayay,cahayaz);
+    posisiLampu(cahayax,cahayay,cahayaz);
 
 
     glPushMatrix();
