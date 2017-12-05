@@ -2549,7 +2549,7 @@ int main(int argc, char **argv){
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
     glEnable(GL_AUTO_NORMAL);
-    glClearColor(0.4, 0.9, 1.0, 1.0);
+    glClearColor(0.55, 0.8, 1.0, 1.0);
 
     randomPosisiRumput();
     randomPosisiRumput2();
@@ -2557,7 +2557,7 @@ int main(int argc, char **argv){
 	glEnable(GL_TEXTURE_2D);
 
 	tanah = loadBmpFile("tanah.bmp");
-	bungatxt = loadBmpFile("hijau.bmp");
+	//bungatxt = loadBmpFile("hijau.bmp");
 	jalantxt = loadBmpFile("jalan.bmp");
 	sumurtxt = loadBmpFile("sumur.bmp");
 	kuburantxt = loadBmpFile("marmer.bmp");
