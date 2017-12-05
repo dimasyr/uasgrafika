@@ -1,8 +1,10 @@
 #include <iostream>
 #include <GL/glut.h>
 #include "Camera.h"
+#include <stdlib.h>
 #include <math.h>      // For math routines (such as sqrt & trig).
 #include <cstdio>
+
 
 #define PI 3.14159265358979323846
 #define GL_GENERATE_MIPMAP 0x8191
@@ -11,7 +13,7 @@ using namespace std;
 //skala translate tiap kotak x=5, y dan z =1
 
 //float posCamx=0, posCamy=0, posCamz=5, lookCamx=0, lookCamy=0, lookCamz=0;
-
+GLuint green;
 GLuint black;
 GLuint air;
 GLuint tanah;
@@ -47,10 +49,13 @@ GLfloat qaWhite[] = {1.0, 1.0, 1.0, 1.0}; //White Color
 GLfloat qaRed[] = {1.0, 0.0, 0.0, 1.0}; //White Color
 //GLfloat letakCahaya[][]
 
-float cahayax=5.0, cahayay=4.0, cahayaz=-3.0;
+int px[500],pz[500],px2[500],pz2[500];
+
+float cahayax=0.0, cahayay=0.0, cahayaz=0.0;
 //static GLdouble viewer[]= {0.0, 0.0, 10.0};
 static GLfloat theta = 0.0, speed = 0.55, speed2 = 2.35, theta2= 0.0;
 float y=0;
+
 Camera*	camera;
 
 float textcoord[][2] = {
@@ -62,6 +67,7 @@ float textcoord[][2] = {
 
 void display(void);
 void reshape(int x, int y);
+
 GLuint loadBmpFile(const char* fileName) {
     GLuint texture_id;
     unsigned char * pBitmapData;
@@ -128,6 +134,7 @@ GLuint loadBmpFile(const char* fileName) {
 
     return texture_id;
 }
+
 GLfloat cvertices[8][3] = {{-0.5 , -0.5, 0.5},
                            { 0.5 , -0.5, 0.5},
                            { 0.5 ,  0.5, 0.5},
@@ -138,6 +145,7 @@ GLfloat cvertices[8][3] = {{-0.5 , -0.5, 0.5},
                            { 0.5 ,  0.5, -0.5},
                            {-0.5 ,  0.5, -0.5}
                            };
+
 void normalize(float*v){
     float length =sqrt(v[0]*v[0]+v[1]*v[1]+v[2]*v[2]);
 
@@ -285,7 +293,7 @@ void alaskubus(GLfloat posX, GLfloat posY, GLfloat posZ, GLfloat panjang, GLfloa
         glEnd();
     }
 }
-void cube(float besar){
+void cube(float besar, float texture_scale){
     // Depan
     glBegin(GL_QUADS);
         glNormal3fv(calculate_normal(cvertices[0], cvertices[1], cvertices[2]));
@@ -399,7 +407,7 @@ void setLighting(){
     GLfloat Noemit[] = {0.0, 0.0, 0.0, 1.0};
 
     // Light source position
-    GLfloat qaLightPosition[]    = {cahayax, cahayay, cahayaz, 0.7};
+    GLfloat qaLightPosition[]    = {cahayax, cahayay, cahayaz, 1};
     GLfloat qaLightPosition2[]    = {50, 6, -60, 0.7};
 
     // Set lighting intensity and color
@@ -439,12 +447,12 @@ void setMaterialmerah(){
     glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 20);
 }
 void setMaterialputih(){
-     float MatAmbient[] = { 0.325f, 0.30725f, 0.30725f, 0.922f};
-    float MatDiffuse[] = { 0.929f, 0.929f, 0.929f, 0.922f  };
-    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, MatAmbient);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, MatDiffuse);
+    float MatAmbient[] = { 1.0f, 1.0f, 1.0f, 1.0f};
+    float MatDiffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f  };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, qaWhite);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, qaWhite);
     glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, qaWhite);
-    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 10);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 100);
 }
 void setmaterialPerl(){
     float MatAmbient[] = { 0.25f, 0.20725f, 0.20725f, 0.922f};
@@ -571,7 +579,7 @@ switch( key )
         camera->Rotate(0.0f,-0.1f,0.0f );
         break;
     case 'r':
-        camera = new Camera( 0.0, 0.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
+        camera = new Camera( 50.0, 2.7, 20.0, 50.0, 2.7, -50.0, 0.0, 1.0, 0.0 );
         break;
     default:
         break;
@@ -580,16 +588,16 @@ switch( key )
 //   if(key == 'b' || key == 'B') spin = !spin;
 
 
-/*
-   if(key == '1') LightPosition[0]-= 20.0f;
-   if(key == '2') LightPosition[0]+= 20.0f;
-   if(key == '3') LightPosition[1]-= 20.0f;
-   if(key == '4') LightPosition[1]+= 20.0f;
-   if(key == '5') LightPosition[2]-= 20.0f;
-   if(key == '6') LightPosition[2]+= 20.0f;
-*/
 
-   if(key == 'q' || key == 'Q') exit(0);
+   if(key == '1') cahayax-= 5.0f;
+   if(key == '2') cahayax+= 5.0f;
+   if(key == '3') cahayay-= 5.0f;
+   if(key == '4') cahayay+= 5.0f;
+   if(key == '5') cahayaz-= 5.0f;
+   if(key == '6') cahayaz+= 5.0f;
+
+
+
 
    display();
 }
@@ -984,14 +992,14 @@ void tugu(){
     glColor3f(1,1,0);
     glTranslatef(0,1,0);
     glScalef(1,2,1);
-    cube(1);
+    cube(1, 10);
     glPopMatrix();
     //body atas
     glPushMatrix();
     glColor3f(1,0.2,0.5);
     glTranslatef(0,2.05,0);
     glScalef(1.2,0.1,1.2);
-    cube(1);
+    cube(1,10);
     glPopMatrix();
     //atap
     glPushMatrix();
@@ -1090,18 +1098,18 @@ void pagar(){
     glPushMatrix();
     glColor3f(0.5,0.1,0.7);
     glTranslatef(0.5,0.625,-50);
-    glScalef(1,2.5,200);
-     glBindTexture(GL_TEXTURE_2D, kuburantxt);
-    cube(0.5);
-     glBindTexture(GL_TEXTURE_2D, -1);
+    glScalef(1,2.5,199);
+    glBindTexture(GL_TEXTURE_2D, kuburantxt);
+    cube(0.5, 5);
+    glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //kanan
     glPushMatrix();
     glColor3f(0.5,0.1,0.7);
     glTranslatef(99.5,0.625,-50);
-    glScalef(1,2.5,200);
+    glScalef(1,2.5,199);
      glBindTexture(GL_TEXTURE_2D, kuburantxt);
-    cube(0.5);
+    cube(0.5, 10);
      glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //belakang
@@ -1109,9 +1117,9 @@ void pagar(){
     glColor3f(0.5,0.1,0.7);
     glTranslatef(50,0.625,-99.5);
     glRotatef(90,0,1,0);
-    glScalef(1,2.5,200);
+    glScalef(1,2.5,199);
      glBindTexture(GL_TEXTURE_2D, kuburantxt);
-    cube(0.5);
+    cube(0.5, 5);
      glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //depan kiri
@@ -1119,20 +1127,19 @@ void pagar(){
     glColor3f(0.5,0.1,0.7);
     glTranslatef(20,0.625,-0.5);
     glRotatef(90,0,1,0);
-    glScalef(1,2.5,80);
-     glBindTexture(GL_TEXTURE_2D, kuburantxt);
-    cube(0.5);
+    glScalef(1,2.5,79);
+     glBindTexture(GL_TEXTURE_2D, gapuraatas);
+    cube(0.5,10);
      glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //depan kanan
-    //depan kiri
     glPushMatrix();
     glColor3f(0.5,0.1,0.7);
     glTranslatef(80,0.625,-0.5);
     glRotatef(90,0,1,0);
-    glScalef(1,2.5,80);
-     glBindTexture(GL_TEXTURE_2D, kuburantxt);
-    cube(0.5);
+    glScalef(1,2.5,79);
+     glBindTexture(GL_TEXTURE_2D, gapuraatas);
+    cube(0.5,5);
      glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
 }
@@ -1249,7 +1256,7 @@ void lampu(){
     glPopMatrix();
 
     glPushMatrix();
-    glColor3f(1,1,1);
+    //glColor3f(1,1,1);
     glBindTexture(GL_TEXTURE_2D, black);
     tabung(3.0, 0.0, -6, 0.07, 0.07, 2.0, 6, 1, true, true, 10);
     glBindTexture(GL_TEXTURE_2D, -1);
@@ -1258,7 +1265,7 @@ void lampu(){
     glPopMatrix();
 
     glPushMatrix();
-    glColor3f(1,1,1);
+
     glTranslatef(3.0,2.54,-6);
     glutSolidSphere(0.5,25,25);
     glPopMatrix();
@@ -1364,896 +1371,71 @@ void semak (){
     }
     glPopMatrix();
 }
-void cabang (){
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.867347, 4.156862, -0.877226);
-    glTexCoord2f(-0.533322, -0.063494);
-    glNormal3f(-0.0294, 0.0825, 0.9962);
-    glVertex3f(-1.549831, -1.333189, -1.189907);
-    glTexCoord2f(-0.663534, -1.947878);
-    glNormal3f(-0.7994, -0.0221, 0.6004);
-    glVertex3f(0.068850, -1.330682, -1.163511);
-    glTexCoord2f(-0.085394, -1.899305);
-    glNormal3f(0.7051, 0.0091, 0.7090);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(0.139305, -1.329350, -2.389079);
-    glTexCoord2f(-1.809854, -1.901812);
-    glNormal3f(0.8146, 0.0855, -0.5737);
-    glVertex3f(-0.825127, 3.416767, -2.306097);
-    glTexCoord2f(-1.207530, -0.328829);
-    glNormal3f(0.0134, 0.1093, -0.9939);
-    glVertex3f(-0.405093, 7.576131, -1.667079);
-    glTexCoord2f(-1.366466, 1.409555);
-    glNormal3f(0.9643, 0.1263, 0.2328);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.825127, 3.416767, -2.306097);
-    glTexCoord2f(-1.207530, -0.328829);
-    glNormal3f(0.0134, 0.1093, -0.9939);
-    glVertex3f(0.139305, -1.329350, -2.389079);
-    glTexCoord2f(-1.809854, -1.901812);
-    glNormal3f(0.8146, 0.0855, -0.5737);
-    glVertex3f(-1.194680, -1.335544, -2.802517);
-    glTexCoord2f(-1.301689, -1.966942);
-    glNormal3f(-0.4872, 0.0731, -0.8702);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.825127, 3.416767, -2.306097);
-    glTexCoord2f(-1.207530, -0.328829);
-    glNormal3f(0.0134, 0.1093, -0.9939);
-    glVertex3f(-1.194680, -1.335544, -2.802517);
-    glTexCoord2f(-1.301689, -1.966942);
-    glNormal3f(-0.4872, 0.0731, -0.8702);
-    glVertex3f(-1.273815, 4.966448, -1.905464);
-    glTexCoord2f(-1.001325, 0.260186);
-    glNormal3f(-0.8903, -0.0124, -0.4552);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.273815, 4.966448, -1.905464);
-    glTexCoord2f(-1.001325, 0.260186);
-    glNormal3f(-0.8903, -0.0124, -0.4552);
-    glVertex3f(-1.549831, -1.333189, -1.189907);
-    glTexCoord2f(-0.663534, -1.947878);
-    glNormal3f(-0.7994, -0.0221, 0.6004);
-    glVertex3f(-1.241564, 10.488920, -1.723966);
-    glTexCoord2f(-0.616457, 2.163076);
-    glNormal3f(-0.0169, 0.3064, 0.9518);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.405093, 7.576131, -1.667079);
-    glTexCoord2f(-1.366466, 1.409555);
-    glNormal3f(0.9643, 0.1263, 0.2328);
-    glVertex3f(-0.825127, 3.416767, -2.306097);
-    glTexCoord2f(-1.207530, -0.328829);
-    glNormal3f(0.0134, 0.1093, -0.9939);
-    glVertex3f(-0.795685, 9.595210, -2.187923);
-    glTexCoord2f(-1.168897, 1.857249);
-    glNormal3f(0.8455, 0.2055, -0.4929);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.405093, 7.576131, -1.667079);
-    glTexCoord2f(-0.438391, 1.211348);
-    glNormal3f(0.9643, 0.1263, 0.2328);
-    glVertex3f(-0.867347, 4.156862, -0.877226);
-    glTexCoord2f(-0.533322, -0.063494);
-    glNormal3f(-0.0294, 0.0825, 0.9962);
-    glVertex3f(0.068850, -1.330682, -1.163511);
-    glTexCoord2f(-0.085394, -1.899305);
-    glNormal3f(0.7051, 0.0091, 0.7090);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.241564, 10.488920, -1.723966);
-    glTexCoord2f(-0.616457, 2.163076);
-    glNormal3f(-0.0169, 0.3064, 0.9518);
-    glVertex3f(-0.405093, 7.576131, -1.667079);
-    glTexCoord2f(-0.438391, 1.211348);
-    glNormal3f(0.9643, 0.1263, 0.2328);
-    glVertex3f(-0.795685, 9.595210, -2.187923);
-    glTexCoord2f(-0.639500, 2.276476);
-    glNormal3f(0.8455, 0.2055, -0.4929);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.273815, 4.966448, -1.905464);
-    glTexCoord2f(-1.001325, 0.260186);
-    glNormal3f(-0.8903, -0.0124, -0.4552);
-    glVertex3f(-1.241564, 10.488920, -1.723966);
-    glTexCoord2f(-0.616457, 2.163076);
-    glNormal3f(-0.0169, 0.3064, 0.9518);
-    glVertex3f(-1.497546, 12.075701, -2.270085);
-    glTexCoord2f(-0.873673, 2.614623);
-    glNormal3f(-0.1498, 0.9814, -0.1202);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(2.165520, 4.155225, -1.444837);
-    glTexCoord2f(1.206063, 1.067046);
-    glNormal3f(0.4497, -0.0319, 0.8926);
-    glVertex3f(-0.382338, 2.649861, -1.163238);
-    glTexCoord2f(0.195214, 1.139014);
-    glNormal3f(0.2910, -0.5509, 0.7821);
-    glVertex3f(2.107894, 3.679790, -1.906483);
-    glTexCoord2f(1.088579, 0.903820);
-    glNormal3f(0.6841, -0.7204, -0.1139);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(2.165520, 4.155225, -1.444837);
-    glTexCoord2f(1.206063, 1.067046);
-    glNormal3f(0.4497, -0.0319, 0.8926);
-    glVertex3f(2.813925, 4.959329, -1.961447);
-    glTexCoord2f(1.591357, 0.990463);
-    glNormal3f(0.7366, 0.6666, -0.1147);
-    glVertex3f(-0.735174, 3.805076, -1.511302);
-    glTexCoord2f(0.302792, 1.571407);
-    glNormal3f(-0.4280, 0.8867, 0.1750);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(2.107894, 3.679790, -1.906483);
-    glTexCoord2f(1.088579, 0.903820);
-    glNormal3f(0.6841, -0.7204, -0.1139);
-    glVertex3f(-0.372852, 2.667495, -2.123113);
-    glTexCoord2f(0.222313, 0.704706);
-    glNormal3f(0.1201, -0.5833, -0.8033);
-    glVertex3f(1.648500, 3.852098, -2.328539);
-    glTexCoord2f(0.994547, 0.703304);
-    glNormal3f(0.1120, -0.0696, -0.9913);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(1.648500, 3.852098, -2.328539);
-    glTexCoord2f(0.994547, 0.703304);
-    glNormal3f(0.1120, -0.0696, -0.9913);
-    glVertex3f(-0.372852, 2.667495, -2.123113);
-    glTexCoord2f(0.222313, 0.704706);
-    glNormal3f(0.1201, -0.5833, -0.8033);
-    glVertex3f(-0.735174, 3.805076, -1.511302);
-    glTexCoord2f(0.297768, 0.330467);
-    glNormal3f(-0.4280, 0.8867, 0.1750);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.735174, 3.805076, -1.511302);
-    glTexCoord2f(0.297768, 0.330467);
-    glNormal3f(-0.4280, 0.8867, 0.1750);
-    glVertex3f(2.813925, 4.959329, -1.961447);
-    glTexCoord2f(1.591357, 0.990463);
-    glNormal3f(0.7366, 0.6666, -0.1147);
-    glVertex3f(1.648500, 3.852098, -2.328539);
-    glTexCoord2f(0.994547, 0.703304);
-    glNormal3f(0.1120, -0.0696, -0.9913);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(2.813925, 4.959329, -1.961447);
-    glTexCoord2f(1.591357, 0.990463);
-    glNormal3f(0.7366, 0.6666, -0.1147);
-    glVertex3f(2.107894, 3.679790, -1.906483);
-    glTexCoord2f(1.088579, 0.903820);
-    glNormal3f(0.6841, -0.7204, -0.1139);
-    glVertex3f(1.648500, 3.852098, -2.328539);
-    glTexCoord2f(0.994547, 0.703304);
-    glNormal3f(0.1120, -0.0696, -0.9913);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.812376, 6.360534, -3.691374);
-    glTexCoord2f(2.026264, -1.136874);
-    glNormal3f(0.1641, -0.3381, -0.9267);
-    glVertex3f(-0.505065, 5.389382, -1.817205);
-    glTexCoord2f(1.620303, -1.859209);
-    glNormal3f(0.8845, 0.4416, -0.1506);
-    glVertex3f(-0.899091, 4.796803, -1.949262);
-    glTexCoord2f(1.921075, -1.948997);
-    glNormal3f(-0.0275, -0.7895, -0.6132);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-2.230624, 6.383121, -3.138590);
-    glTexCoord2f(2.252466, -1.219074);
-    glNormal3f(-0.9615, -0.2199, 0.1649);
-    glVertex3f(-1.314994, 5.324448, -1.388715);
-    glTexCoord2f(2.288047, -1.973339);
-    glNormal3f(-0.7947, 0.1306, 0.5928);
-    glVertex3f(-2.358844, 7.328835, -3.891964);
-    glTexCoord2f(2.249823, -0.754844);
-    glNormal3f(-0.3836, 0.7522, -0.5357);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.812376, 6.360534, -3.691374);
-    glTexCoord2f(2.026264, -1.136874);
-    glNormal3f(0.1641, -0.3381, -0.9267);
-    glVertex3f(-2.358844, 7.328835, -3.891964);
-    glTexCoord2f(2.057909, -0.728233);
-    glNormal3f(-0.3836, 0.7522, -0.5357);
-    glVertex3f(-0.505065, 5.389382, -1.817205);
-    glTexCoord2f(1.620303, -1.859209);
-    glNormal3f(0.8845, 0.4416, -0.1506);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-2.358844, 7.328835, -3.891964);
-    glTexCoord2f(2.057909, -0.728233);
-    glNormal3f(-0.3836, 0.7522, -0.5357);
-    glVertex3f(-1.314994, 5.324448, -1.388715);
-    glTexCoord2f(1.449443, -1.789781);
-    glNormal3f(-0.7947, 0.1306, 0.5928);
-    glVertex3f(-0.505065, 5.389382, -1.817205);
-    glTexCoord2f(1.620303, -1.859209);
-    glNormal3f(0.8845, 0.4416, -0.1506);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-2.211318, 5.061069, 0.583011);
-    glTexCoord2f(0.832274, -0.965809);
-    glNormal3f(-0.2943, -0.6480, 0.7024);
-    glVertex3f(-2.445951, 5.771827, 0.355042);
-    glTexCoord2f(0.616434, -0.879462);
-    glNormal3f(-0.8162, 0.3992, -0.4177);
-    glVertex3f(-1.988993, 4.358886, -0.335544);
-    glTexCoord2f(0.769342, -1.361228);
-    glNormal3f(-0.7027, -0.6960, 0.1477);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.465203, 5.108954, -0.333683);
-    glTexCoord2f(0.362867, -1.240861);
-    glNormal3f(0.6837, 0.7295, -0.0189);
-    glVertex3f(-2.445951, 5.771827, 0.355042);
-    glTexCoord2f(0.616434, -0.879462);
-    glNormal3f(-0.8162, 0.3992, -0.4177);
-    glVertex3f(-2.319730, 7.460398, 2.323781);
-    glTexCoord2f(0.704244, 0.017786);
-    glNormal3f(-0.0751, 0.7102, 0.7000);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.812376, 6.360534, -3.691374);
-    glTexCoord2f(2.026264, -1.136874);
-    glNormal3f(0.1641, -0.3381, -0.9267);
-    glVertex3f(-2.230624, 6.383121, -3.138590);
-    glTexCoord2f(2.252466, -1.219074);
-    glNormal3f(-0.9615, -0.2199, 0.1649);
-    glVertex3f(-2.358844, 7.328835, -3.891964);
-    glTexCoord2f(2.057909, -0.728233);
-    glNormal3f(-0.3836, 0.7522, -0.5357);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.444197, 3.615060, -1.263279);
-    glTexCoord2f(1.063951, -1.972365);
-    glNormal3f(0.4187, -0.5753, 0.7027);
-    glVertex3f(-2.211318, 5.061069, 0.583011);
-    glTexCoord2f(0.832274, -0.965809);
-    glNormal3f(-0.2943, -0.6480, 0.7024);
-    glVertex3f(-1.988993, 4.358886, -0.335544);
-    glTexCoord2f(0.769342, -1.361228);
-    glNormal3f(-0.7027, -0.6960, 0.1477);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.988993, 4.358886, -0.335544);
-    glTexCoord2f(0.769342, -1.361228);
-    glNormal3f(-0.7027, -0.6960, 0.1477);
-    glVertex3f(-1.260430, 3.859101, -1.904382);
-    glTexCoord2f(0.547809, -1.930855);
-    glNormal3f(-0.6914, -0.1329, -0.7102);
-    glVertex3f(-0.444197, 3.615060, -1.263279);
-    glTexCoord2f(1.063951, -1.972365);
-    glNormal3f(0.4187, -0.5753, 0.7027);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.198746, 9.063770, -2.746028);
-    glTexCoord2f(1.579810, 2.874998);
-    glNormal3f(0.3366, 0.7303, -0.5944);
-    glVertex3f(-0.587266, 7.963510, -1.609305);
-    glTexCoord2f(1.148377, 2.466696);
-    glNormal3f(0.6799, 0.3969, 0.6166);
-    glVertex3f(-0.617416, 7.676767, -1.962022);
-    glTexCoord2f(1.287044, 2.350152);
-    glNormal3f(0.4672, -0.5377, -0.7018);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.437030, 6.185566, -1.487890);
-    glTexCoord2f(0.237108, 1.914098);
-    glNormal3f(0.6758, -0.7308, 0.0958);
-    glVertex3f(-0.611861, 6.696321, -1.724902);
-    glTexCoord2f(0.187827, 1.708268);
-    glNormal3f(0.2697, 0.7772, -0.5685);
-    glVertex3f(0.618646, 7.318822, -0.290189);
-    glTexCoord2f(0.959415, 1.767317);
-    glNormal3f(0.6502, 0.4346, 0.6232);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(1.216627, 5.211133, -2.559260);
-    glTexCoord2f(2.508584, 0.630887);
-    glNormal3f(0.3372, 0.8551, -0.3939);
-    glVertex3f(0.590186, 3.866176, -1.602036);
-    glTexCoord2f(1.912028, 0.410644);
-    glNormal3f(-0.0333, 0.5898, 0.8069);
-    glVertex3f(0.836874, 3.589821, -1.911068);
-    glTexCoord2f(2.068260, 0.295536);
-    glNormal3f(0.9320, -0.2998, -0.2038);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(1.216627, 5.211133, -2.559260);
-    glTexCoord2f(2.508584, 0.630887);
-    glNormal3f(0.3372, 0.8551, -0.3939);
-    glVertex3f(0.461928, 3.699703, -2.101837);
-    glTexCoord2f(2.244734, 0.238035);
-    glNormal3f(-0.5514, 0.0230, -0.8339);
-    glVertex3f(0.590186, 3.866176, -1.602036);
-    glTexCoord2f(2.426336, 0.211321);
-    glNormal3f(-0.0333, 0.5898, 0.8069);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(1.216627, 5.211133, -2.559260);
-    glTexCoord2f(2.508584, 0.630887);
-    glNormal3f(0.3372, 0.8551, -0.3939);
-    glVertex3f(0.836874, 3.589821, -1.911068);
-    glTexCoord2f(2.068260, 0.295536);
-    glNormal3f(0.9320, -0.2998, -0.2038);
-    glVertex3f(0.461928, 3.699703, -2.101837);
-    glTexCoord2f(2.244734, 0.238035);
-    glNormal3f(-0.5514, 0.0230, -0.8339);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.399175, 4.666963, 1.380207);
-    glTexCoord2f(0.605516, 2.811071);
-    glNormal3f(0.3221, -0.1228, 0.9387);
-    glVertex3f(-1.669177, 4.984135, -0.135957);
-    glTexCoord2f(0.687101, 2.314106);
-    glNormal3f(0.8776, 0.4760, -0.0567);
-    glVertex3f(-2.074593, 4.976092, -0.026591);
-    glTexCoord2f(0.754215, 2.398861);
-    glNormal3f(-0.6966, 0.5537, 0.4561);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.399175, 4.666963, 1.380207);
-    glTexCoord2f(0.605516, 2.811071);
-    glNormal3f(0.3221, -0.1228, 0.9387);
-    glVertex3f(-1.958344, 4.616738, -0.073936);
-    glTexCoord2f(0.824103, 2.544950);
-    glNormal3f(-0.1932, -0.9752, 0.1080);
-    glVertex3f(-1.669177, 4.984135, -0.135957);
-    glTexCoord2f(0.874108, 2.737725);
-    glNormal3f(0.8776, 0.4760, -0.0567);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.399175, 4.666963, 1.380207);
-    glTexCoord2f(0.605516, 2.811071);
-    glNormal3f(0.3221, -0.1228, 0.9387);
-    glVertex3f(-2.074593, 4.976092, -0.026591);
-    glTexCoord2f(0.754215, 2.398861);
-    glNormal3f(-0.6966, 0.5537, 0.4561);
-    glVertex3f(-1.958344, 4.616738, -0.073936);
-    glTexCoord2f(0.824103, 2.544950);
-    glNormal3f(-0.1932, -0.9752, 0.1080);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.067270, 5.702630, -2.549646);
-    glTexCoord2f(2.227261, -0.143612);
-    glNormal3f(0.7696, -0.4544, -0.4486);
-    glVertex3f(-1.451593, 5.726283, -2.570899);
-    glTexCoord2f(2.271672, -0.275721);
-    glNormal3f(-0.9000, -0.0703, -0.4303);
-    glVertex3f(-1.045056, 6.768772, -3.591383);
-    glTexCoord2f(2.770040, -0.003104);
-    glNormal3f(0.1145, 0.6708, -0.7328);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.394543, 8.728384, -0.441430);
-    glTexCoord2f(1.960986, 1.463654);
-    glNormal3f(-0.3488, 0.5241, 0.7770);
-    glVertex3f(-1.096891, 7.808803, -1.658592);
-    glTexCoord2f(2.467383, 1.147650);
-    glNormal3f(-0.9207, -0.3847, 0.0655);
-    glVertex3f(-0.650121, 7.825992, -1.449333);
-    glTexCoord2f(2.537439, 1.329308);
-    glNormal3f(0.6247, -0.2930, 0.7238);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.394543, 8.728384, -0.441430);
-    glTexCoord2f(1.960986, 1.463654);
-    glNormal3f(-0.3488, 0.5241, 0.7770);
-    glVertex3f(-0.853013, 8.163962, -1.747187);
-    glTexCoord2f(2.350960, 1.017403);
-    glNormal3f(0.0203, 0.9208, -0.3896);
-    glVertex3f(-1.096891, 7.808803, -1.658592);
-    glTexCoord2f(2.467383, 1.147650);
-    glNormal3f(-0.9207, -0.3847, 0.0655);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.650121, 7.825992, -1.449333);
-    glTexCoord2f(2.537439, 1.329308);
-    glNormal3f(0.6247, -0.2930, 0.7238);
-    glVertex3f(-0.853013, 8.163962, -1.747187);
-    glTexCoord2f(2.558421, 1.486096);
-    glNormal3f(0.0203, 0.9208, -0.3896);
-    glVertex3f(-1.394543, 8.728384, -0.441430);
-    glTexCoord2f(2.015130, 1.436738);
-    glNormal3f(-0.3488, 0.5241, 0.7770);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.051056, 7.189873, -1.698019);
-    glTexCoord2f(2.199726, -0.379434);
-    glNormal3f(0.2127, 0.8815, 0.4216);
-    glVertex3f(-1.037442, 6.943398, -2.059374);
-    glTexCoord2f(2.186924, -0.219751);
-    glNormal3f(0.1458, -0.0415, -0.9884);
-    glVertex3f(-2.465093, 7.822194, -2.306898);
-    glTexCoord2f(1.564606, -0.386213);
-    glNormal3f(-0.8034, 0.5151, -0.2986);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(0.619251, 3.742969, -2.052844);
-    glTexCoord2f(1.942797, 1.853112);
-    glNormal3f(0.4194, 0.7316, -0.5375);
-    glVertex3f(0.613229, 3.435482, -1.710121);
-    glTexCoord2f(2.045094, 1.782811);
-    glNormal3f(0.6009, -0.2391, 0.7627);
-    glVertex3f(1.692837, 2.550531, -2.838055);
-    glTexCoord2f(2.386315, 2.371786);
-    glNormal3f(0.6623, -0.5265, -0.5330);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(0.350393, 3.255892, -1.933458);
-    glTexCoord2f(2.176824, 1.729762);
-    glNormal3f(-0.5580, -0.8054, -0.2000);
-    glVertex3f(0.619251, 3.742969, -2.052844);
-    glTexCoord2f(2.411538, 1.675306);
-    glNormal3f(0.4194, 0.7316, -0.5375);
-    glVertex3f(1.692837, 2.550531, -2.838055);
-    glTexCoord2f(2.386315, 2.371786);
-    glNormal3f(0.6623, -0.5265, -0.5330);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.549831, -1.333189, -1.189907);
-    glTexCoord2f(-0.663534, -1.947878);
-    glNormal3f(-0.7994, -0.0221, 0.6004);
-    glVertex3f(-0.867347, 4.156862, -0.877226);
-    glTexCoord2f(-0.533322, -0.063494);
-    glNormal3f(-0.0294, 0.0825, 0.9962);
-    glVertex3f(-1.241564, 10.488920, -1.723966);
-    glTexCoord2f(-0.616457, 2.163076);
-    glNormal3f(-0.0169, 0.3064, 0.9518);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(0.068850, -1.330682, -1.163511);
-    glTexCoord2f(-0.085394, -1.899305);
-    glNormal3f(0.7051, 0.0091, 0.7090);
-    glVertex3f(0.139305, -1.329350, -2.389079);
-    glTexCoord2f(0.180385, -1.872847);
-    glNormal3f(0.8146, 0.0855, -0.5737);
-    glVertex3f(-0.405093, 7.576131, -1.667079);
-    glTexCoord2f(-0.438391, 1.211348);
-    glNormal3f(0.9643, 0.1263, 0.2328);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.273815, 4.966448, -1.905464);
-    glTexCoord2f(-1.001325, 0.260186);
-    glNormal3f(-0.8903, -0.0124, -0.4552);
-    glVertex3f(-1.194680, -1.335544, -2.802517);
-    glTexCoord2f(-1.301689, -1.966942);
-    glNormal3f(-0.4872, 0.0731, -0.8702);
-    glVertex3f(-1.549831, -1.333189, -1.189907);
-    glTexCoord2f(-0.663534, -1.947878);
-    glNormal3f(-0.7994, -0.0221, 0.6004);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.273815, 4.966448, -1.905464);
-    glTexCoord2f(-1.001325, 0.260186);
-    glNormal3f(-0.8903, -0.0124, -0.4552);
-    glVertex3f(-1.497546, 12.075701, -2.270085);
-    glTexCoord2f(-0.873673, 2.614623);
-    glNormal3f(-0.1498, 0.9814, -0.1202);
-    glVertex3f(-0.825127, 3.416767, -2.306097);
-    glTexCoord2f(-1.207530, -0.328829);
-    glNormal3f(0.0134, 0.1093, -0.9939);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.497546, 12.075701, -2.270085);
-    glTexCoord2f(-0.873673, 2.614623);
-    glNormal3f(-0.1498, 0.9814, -0.1202);
-    glVertex3f(-0.795685, 9.595210, -2.187923);
-    glTexCoord2f(-1.168897, 1.857249);
-    glNormal3f(0.8455, 0.2055, -0.4929);
-    glVertex3f(-0.825127, 3.416767, -2.306097);
-    glTexCoord2f(-1.207530, -0.328829);
-    glNormal3f(0.0134, 0.1093, -0.9939);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.405093, 7.576131, -1.667079);
-    glTexCoord2f(-0.438391, 1.211348);
-    glNormal3f(0.9643, 0.1263, 0.2328);
-    glVertex3f(-1.241564, 10.488920, -1.723966);
-    glTexCoord2f(-0.616457, 2.163076);
-    glNormal3f(-0.0169, 0.3064, 0.9518);
-    glVertex3f(-0.867347, 4.156862, -0.877226);
-    glTexCoord2f(-0.533322, -0.063494);
-    glNormal3f(-0.0294, 0.0825, 0.9962);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.795685, 9.595210, -2.187923);
-    glTexCoord2f(-0.639500, 2.276476);
-    glNormal3f(0.8455, 0.2055, -0.4929);
-    glVertex3f(-1.497546, 12.075701, -2.270085);
-    glTexCoord2f(-0.873673, 2.614623);
-    glNormal3f(-0.1498, 0.9814, -0.1202);
-    glVertex3f(-1.241564, 10.488920, -1.723966);
-    glTexCoord2f(-0.616457, 2.163076);
-    glNormal3f(-0.0169, 0.3064, 0.9518);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.735174, 3.805076, -1.511302);
-    glTexCoord2f(0.302792, 1.571407);
-    glNormal3f(-0.4280, 0.8867, 0.1750);
-    glVertex3f(-0.382338, 2.649861, -1.163238);
-    glTexCoord2f(0.195214, 1.139014);
-    glNormal3f(0.2910, -0.5509, 0.7821);
-    glVertex3f(2.165520, 4.155225, -1.444837);
-    glTexCoord2f(1.206063, 1.067046);
-    glNormal3f(0.4497, -0.0319, 0.8926);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(2.107894, 3.679790, -1.906483);
-    glTexCoord2f(1.088579, 0.903820);
-    glNormal3f(0.6841, -0.7204, -0.1139);
-    glVertex3f(-0.382338, 2.649861, -1.163238);
-    glTexCoord2f(0.195214, 1.139014);
-    glNormal3f(0.2910, -0.5509, 0.7821);
-    glVertex3f(-0.372852, 2.667495, -2.123113);
-    glTexCoord2f(0.222313, 0.704706);
-    glNormal3f(0.1201, -0.5833, -0.8033);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(2.107894, 3.679790, -1.906483);
-    glTexCoord2f(1.088579, 0.903820);
-    glNormal3f(0.6841, -0.7204, -0.1139);
-    glVertex3f(2.813925, 4.959329, -1.961447);
-    glTexCoord2f(1.591357, 0.990463);
-    glNormal3f(0.7366, 0.6666, -0.1147);
-    glVertex3f(2.165520, 4.155225, -1.444837);
-    glTexCoord2f(1.206063, 1.067046);
-    glNormal3f(0.4497, -0.0319, 0.8926);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.260430, 3.859101, -1.904382);
-    glTexCoord2f(0.547809, -1.930855);
-    glNormal3f(-0.6914, -0.1329, -0.7102);
-    glVertex3f(-2.445951, 5.771827, 0.355042);
-    glTexCoord2f(0.616434, -0.879462);
-    glNormal3f(-0.8162, 0.3992, -0.4177);
-    glVertex3f(-1.465203, 5.108954, -0.333683);
-    glTexCoord2f(0.362867, -1.240861);
-    glNormal3f(0.6837, 0.7295, -0.0189);
-    glVertex3f(-0.256945, 4.253136, -1.606416);
-    glTexCoord2f(0.203904, -1.951937);
-    glNormal3f(0.6678, 0.7415, 0.0648);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.260430, 3.859101, -1.904382);
-    glTexCoord2f(0.547809, -1.930855);
-    glNormal3f(-0.6914, -0.1329, -0.7102);
-    glVertex3f(-1.988993, 4.358886, -0.335544);
-    glTexCoord2f(0.769342, -1.361228);
-    glNormal3f(-0.7027, -0.6960, 0.1477);
-    glVertex3f(-2.445951, 5.771827, 0.355042);
-    glTexCoord2f(0.616434, -0.879462);
-    glNormal3f(-0.8162, 0.3992, -0.4177);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.444197, 3.615060, -1.263279);
-    glTexCoord2f(1.063951, -1.972365);
-    glNormal3f(0.4187, -0.5753, 0.7027);
-    glVertex3f(-0.256945, 4.253136, -1.606416);
-    glTexCoord2f(1.338947, -1.934119);
-    glNormal3f(0.6678, 0.7415, 0.0648);
-    glVertex3f(-1.465203, 5.108954, -0.333683);
-    glTexCoord2f(1.191695, -1.298243);
-    glNormal3f(0.6837, 0.7295, -0.0189);
-    glVertex3f(-2.211318, 5.061069, 0.583011);
-    glTexCoord2f(0.832274, -0.965809);
-    glNormal3f(-0.2943, -0.6480, 0.7024);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-2.319730, 7.460398, 2.323781);
-    glTexCoord2f(0.704244, 0.017786);
-    glNormal3f(-0.0751, 0.7102, 0.7000);
-    glVertex3f(-2.211318, 5.061069, 0.583011);
-    glTexCoord2f(0.832274, -0.965809);
-    glNormal3f(-0.2943, -0.6480, 0.7024);
-    glVertex3f(-1.465203, 5.108954, -0.333683);
-    glTexCoord2f(1.191695, -1.298243);
-    glNormal3f(0.6837, 0.7295, -0.0189);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-2.211318, 5.061069, 0.583011);
-    glTexCoord2f(0.832274, -0.965809);
-    glNormal3f(-0.2943, -0.6480, 0.7024);
-    glVertex3f(-2.319730, 7.460398, 2.323781);
-    glTexCoord2f(0.704244, 0.017786);
-    glNormal3f(-0.0751, 0.7102, 0.7000);
-    glVertex3f(-2.445951, 5.771827, 0.355042);
-    glTexCoord2f(0.616434, -0.879462);
-    glNormal3f(-0.8162, 0.3992, -0.4177);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.198746, 9.063770, -2.746028);
-    glTexCoord2f(1.579810, 2.874998);
-    glNormal3f(0.3366, 0.7303, -0.5944);
-    glVertex3f(-1.006221, 8.033410, -1.807889);
-    glTexCoord2f(1.547382, 2.261355);
-    glNormal3f(-0.8400, 0.5214, -0.1503);
-    glVertex3f(-0.587266, 7.963510, -1.609305);
-    glTexCoord2f(1.672948, 2.241722);
-    glNormal3f(0.6799, 0.3969, 0.6166);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.198746, 9.063770, -2.746028);
-    glTexCoord2f(1.579810, 2.874998);
-    glNormal3f(0.3366, 0.7303, -0.5944);
-    glVertex3f(-0.617416, 7.676767, -1.962022);
-    glTexCoord2f(1.287044, 2.350152);
-    glNormal3f(0.4672, -0.5377, -0.7018);
-    glVertex3f(-1.006221, 8.033410, -1.807889);
-    glTexCoord2f(1.547382, 2.261355);
-    glNormal3f(-0.8400, 0.5214, -0.1503);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(0.618646, 7.318822, -0.290189);
-    glTexCoord2f(0.927849, 1.705899);
-    glNormal3f(0.6502, 0.4346, 0.6232);
-    glVertex3f(-0.611861, 6.696321, -1.724902);
-    glTexCoord2f(0.430303, 2.293682);
-    glNormal3f(0.2697, 0.7772, -0.5685);
-    glVertex3f(-0.880610, 6.548549, -1.289841);
-    glTexCoord2f(0.338155, 2.150959);
-    glNormal3f(-0.6290, 0.2862, 0.7228);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-0.437030, 6.185566, -1.487890);
-    glTexCoord2f(0.237108, 1.914098);
-    glNormal3f(0.6758, -0.7308, 0.0958);
-    glVertex3f(0.618646, 7.318822, -0.290189);
-    glTexCoord2f(0.927849, 1.705899);
-    glNormal3f(0.6502, 0.4346, 0.6232);
-    glVertex3f(-0.880610, 6.548549, -1.289841);
-    glTexCoord2f(0.338155, 2.150959);
-    glNormal3f(-0.6290, 0.2862, 0.7228);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(1.941651, 3.010202, -0.521079);
-    glTexCoord2f(1.219444, 2.184462);
-    glNormal3f(0.6538, -0.3217, 0.6849);
-    glVertex3f(0.978565, 3.759707, -1.854390);
-    glTexCoord2f(1.904776, 2.125485);
-    glNormal3f(0.7941, 0.5463, -0.2665);
-    glVertex3f(0.645007, 3.708727, -1.576262);
-    glTexCoord2f(1.921765, 2.238736);
-    glNormal3f(-0.4076, 0.4466, 0.7965);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(1.941651, 3.010202, -0.521079);
-    glTexCoord2f(1.219444, 2.184462);
-    glNormal3f(0.6538, -0.3217, 0.6849);
-    glVertex3f(0.720091, 3.282272, -1.778549);
-    glTexCoord2f(1.826525, 1.899883);
-    glNormal3f(-0.1376, -0.9873, -0.0800);
-    glVertex3f(0.978565, 3.759707, -1.854390);
-    glTexCoord2f(1.904776, 2.125485);
-    glNormal3f(0.7941, 0.5463, -0.2665);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(1.941651, 3.010202, -0.521079);
-    glTexCoord2f(1.269191, 2.155520);
-    glNormal3f(0.6538, -0.3217, 0.6849);
-    glVertex3f(0.645007, 3.708727, -1.576262);
-    glTexCoord2f(1.720834, 1.714523);
-    glNormal3f(-0.4076, 0.4466, 0.7965);
-    glVertex3f(0.720091, 3.282272, -1.778549);
-    glTexCoord2f(1.826525, 1.899883);
-    glNormal3f(-0.1376, -0.9873, -0.0800);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.533100, 4.701955, -0.342601);
-    glTexCoord2f(2.499901, 0.236813);
-    glNormal3f(0.4000, 0.7797, -0.4817);
-    glVertex3f(-1.529479, 4.605387, -0.495885);
-    glTexCoord2f(2.621113, 0.213498);
-    glNormal3f(0.4000, 0.7797, -0.4817);
-    glVertex3f(-1.860904, 4.796040, -0.462516);
-    glTexCoord2f(2.791479, 0.276933);
-    glNormal3f(0.4000, 0.7797, -0.4817);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-2.826233, 6.208210, 0.033123);
-    glTexCoord2f(1.990513, 2.835753);
-    glNormal3f(-0.5882, 0.8087, 0.0057);
-    glVertex3f(-1.968872, 5.347178, -0.031078);
-    glTexCoord2f(2.345872, 2.497056);
-    glNormal3f(0.6542, 0.6766, -0.3380);
-    glVertex3f(-2.253538, 5.161633, -0.051930);
-    glTexCoord2f(2.417036, 2.624530);
-    glNormal3f(-0.7465, -0.3632, -0.5576);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.968872, 5.347178, -0.031078);
-    glTexCoord2f(2.469139, 2.838256);
-    glNormal3f(0.6542, 0.6766, -0.3380);
-    glVertex3f(-2.826233, 6.208210, 0.033123);
-    glTexCoord2f(1.990513, 2.835753);
-    glNormal3f(-0.5882, 0.8087, 0.0057);
-    glVertex3f(-2.158098, 5.235932, 0.160441);
-    glTexCoord2f(2.449708, 2.735004);
-    glNormal3f(-0.1815, 0.0040, 0.9834);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-2.826233, 6.208210, 0.033123);
-    glTexCoord2f(1.990513, 2.835753);
-    glNormal3f(-0.5882, 0.8087, 0.0057);
-    glVertex3f(-2.253538, 5.161633, -0.051930);
-    glTexCoord2f(2.417036, 2.624530);
-    glNormal3f(-0.7465, -0.3632, -0.5576);
-    glVertex3f(-2.158098, 5.235932, 0.160441);
-    glTexCoord2f(2.449708, 2.735004);
-    glNormal3f(-0.1815, 0.0040, 0.9834);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.314994, 5.324448, -1.388715);
-    glTexCoord2f(2.288047, -1.973339);
-    glNormal3f(-0.7947, 0.1306, 0.5928);
-    glVertex3f(-2.230624, 6.383121, -3.138590);
-    glTexCoord2f(2.252466, -1.219074);
-    glNormal3f(-0.9615, -0.2199, 0.1649);
-    glVertex3f(-1.812376, 6.360534, -3.691374);
-    glTexCoord2f(2.026264, -1.136874);
-    glNormal3f(0.1641, -0.3381, -0.9267);
-    glVertex3f(-0.899091, 4.796803, -1.949262);
-    glTexCoord2f(1.921075, -1.948997);
-    glNormal3f(-0.0275, -0.7895, -0.6132);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.877529, 5.985208, -2.799964);
-    glTexCoord2f(2.955870, 1.835218);
-    glNormal3f(-0.5437, 0.8358, -0.0769);
-    glVertex3f(-1.690146, 6.113536, -2.730050);
-    glTexCoord2f(2.983919, 1.960406);
-    glNormal3f(-0.5437, 0.8358, -0.0769);
-    glVertex3f(-1.649241, 6.123441, -2.911571);
-    glTexCoord2f(2.900631, 1.721090);
-    glNormal3f(-0.5437, 0.8358, -0.0769);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.067270, 5.702630, -2.549646);
-    glTexCoord2f(2.227261, -0.143612);
-    glNormal3f(0.7696, -0.4544, -0.4486);
-    glVertex3f(-1.045056, 6.768772, -3.591383);
-    glTexCoord2f(2.770040, -0.003104);
-    glNormal3f(0.1145, 0.6708, -0.7328);
-    glVertex3f(-1.128173, 5.896754, -2.400779);
-    glTexCoord2f(2.210763, -0.032341);
-    glNormal3f(0.3452, 0.7455, 0.5701);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.045056, 6.768772, -3.591383);
-    glTexCoord2f(2.770040, -0.003104);
-    glNormal3f(0.1145, 0.6708, -0.7328);
-    glVertex3f(-1.451593, 5.726283, -2.570899);
-    glTexCoord2f(2.271672, -0.275721);
-    glNormal3f(-0.9000, -0.0703, -0.4303);
-    glVertex3f(-1.128173, 5.896754, -2.400779);
-    glTexCoord2f(2.358441, -0.399846);
-    glNormal3f(0.3452, 0.7455, 0.5701);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-2.465093, 7.822194, -2.306898);
-    glTexCoord2f(1.564606, -0.386213);
-    glNormal3f(-0.8034, 0.5151, -0.2986);
-    glVertex3f(-1.037442, 6.943398, -2.059374);
-    glTexCoord2f(2.186924, -0.219751);
-    glNormal3f(0.1458, -0.0415, -0.9884);
-    glVertex3f(-1.301611, 6.760573, -1.676179);
-    glTexCoord2f(2.102832, -0.019424);
-    glNormal3f(-0.7278, -0.5933, 0.3440);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(-1.051056, 7.189873, -1.698019);
-    glTexCoord2f(1.969819, 0.141089);
-    glNormal3f(0.2127, 0.8815, 0.4216);
-    glVertex3f(-2.465093, 7.822194, -2.306898);
-    glTexCoord2f(1.564606, -0.386213);
-    glNormal3f(-0.8034, 0.5151, -0.2986);
-    glVertex3f(-1.301611, 6.760573, -1.676179);
-    glTexCoord2f(2.102832, -0.019424);
-    glNormal3f(-0.7278, -0.5933, 0.3440);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex3f(0.350393, 3.255892, -1.933458);
-    glTexCoord2f(2.176824, 1.729762);
-    glNormal3f(-0.5580, -0.8054, -0.2000);
-    glVertex3f(1.692837, 2.550531, -2.838055);
-    glTexCoord2f(2.386315, 2.371786);
-    glNormal3f(0.6623, -0.5265, -0.5330);
-    glVertex3f(0.613229, 3.435482, -1.710121);
-    glTexCoord2f(2.045094, 1.782811);
-    glNormal3f(0.6009, -0.2391, 0.7627);
-    glEnd();
-
-}
-void posisicabang (){
+void tanaman(float x, float y, float z, float derajat) {
+ float vertices[][3] = {
+  {-0.246384, 2.693530, 1.615931},
+  {0.098775, -0.067124, 1.000000},
+  {-1.000000, -0.067124, 1.000000},
+  {-0.672412, 3.809398, -0.273997},
+  {-0.712837, 2.879008, 0.502897},
+  {-0.052556, 1.932876, 1.000000},
+  {-0.713979, 1.932876, 1.000000},
+  {-0.289925, 3.369208, 0.655194},
+  {-0.732071, 2.227654, 1.615931},
+  {-0.037175, 0.932876, 1.000000},
+  {-0.770481, 2.408063, 2.277118},
+  {-0.856990, 0.932876, 1.000000},
+  {-0.114210, 1.568212, 0.485011},
+  {-0.565919, 1.852364, 0.485010},
+  {-0.117792, 1.419556, 1.486446},
+  {-0.426033, 1.987123, -0.429155},
+  {-0.937606, 1.419556, 1.486446},
+  {-0.869725, 1.208880, 2.124065},
+ };
+ float normals[][3] = {
+  {-0.000000, -0.000000, 1.000000},
+  {-0.721400, 0.462100, 0.515800},
+  {-0.263600, 0.298100, 0.917400},
+  {-0.285500, 0.703000, -0.651400},
+  {-0.673600, 0.702200, -0.230700},
+  {0.119900, 0.536700, 0.835200},
+  {0.521500, 0.829000, 0.202000},
+  {0.000000, 0.706900, -0.707300},
+  {-0.000000, 0.949500, 0.313700},
+ };
+ int faces[][4][3] = {
+  {{10, NULL, 1}, {6, NULL, 1}, {7, NULL, 1}, {12, NULL, 1}, },
+  {{5, NULL, 2}, {8, NULL, 2}, {4, NULL, 2}, },
+  {{7, NULL, 3}, {6, NULL, 3}, {8, NULL, 3}, {5, NULL, 3}, },
+  {{6, NULL, 4}, {7, NULL, 4}, {9, NULL, 4}, {1, NULL, 4}, },
+  {{9, NULL, 5}, {11, NULL, 5}, {1, NULL, 5}, },
+  {{2, NULL, 1}, {10, NULL, 1}, {12, NULL, 1}, {3, NULL, 1}, },
+  {{12, NULL, 6}, {10, NULL, 6}, {13, NULL, 6}, {14, NULL, 6}, },
+  {{14, NULL, 7}, {13, NULL, 7}, {16, NULL, 7}, },
+  {{10, NULL, 8}, {12, NULL, 8}, {17, NULL, 8}, {15, NULL, 8}, },
+  {{17, NULL, 9}, {18, NULL, 9}, {15, NULL, 9}, },
+ };
     glPushMatrix();
-    glTranslatef(0.0, 0.0, 1.0);
-    glBindTexture(GL_TEXTURE_2D, pohontxt);
-	cabang();
-	glBindTexture(GL_TEXTURE_2D, -1);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(0.0, 5.0, 0.2 );
-    glBindTexture(GL_TEXTURE_2D, tanah);
-    semak();
-    glBindTexture(GL_TEXTURE_2D, -1);
-    glPopMatrix();
+    glBindTexture(GL_TEXTURE_2D,green);
+    glTranslatef(x, y, z);
+    glRotatef(derajat,0,1,0);
+    glScalef(20,20,20);
+ for (int i = 0; i < (sizeof(faces))/ sizeof(faces[0]); ++i) {
+  glBegin(GL_POLYGON);
+  for (int j = 0; j < (sizeof(faces[0]))/ sizeof(faces[0][0]); ++j) {
+   if (faces[i][j][0] != NULL) {
+                glTexCoord2f(vertices[faces[i][j][0] - 1][0],vertices[faces[i][j][0] - 1][1]);
+    glVertex3fv(vertices[faces[i][j][0] - 1]);
+    if (faces[i][j][2] != NULL) {
+     glNormal3fv(normals[faces[i][j][2] - 1]);
+    }
+   }
+  }
+  glEnd();
+ }
+ glPopMatrix();
 }
+
 void balok (){
 glBegin(GL_POLYGON);
 
@@ -2370,7 +1552,7 @@ void rumahKeranda(){
     glTranslatef(85,0,-85);
     glScalef(0.25,3.1,8.9);
      glBindTexture(GL_TEXTURE_2D, tembok);
-    cube(1);
+    cube(1,10);
      glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
 
@@ -2380,7 +1562,7 @@ void rumahKeranda(){
     glTranslatef(85,0,-85);
     glScalef(0.25,3.1,8.9);
      glBindTexture(GL_TEXTURE_2D, tembok);
-    cube(1);
+    cube(1,10);
      glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
 
@@ -2392,7 +1574,7 @@ void rumahKeranda(){
     glRotatef(90,0,1,0);
     glScalef(0.25,3.1,8.25);
      glBindTexture(GL_TEXTURE_2D, tembok);
-    cube(1);
+    cube(1,10);
      glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //atap
@@ -2439,44 +1621,13 @@ void rumahKeranda(){
     glPopMatrix();
 }
 
-void bunga(){
-    //glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, daun);
-    gluQuadricTexture(p,5);
-    glPushMatrix();
-    glTranslated(0,0,0);
-    glScaled(0.5, 0.2, 0.5);
-    gluSphere(p,1,10,5);
-    glPopMatrix();
-    glBindTexture(GL_TEXTURE_2D, -1);
-    //glDisable(GL_TEXTURE_2D);
-
-//    glPushMatrix();
-//    glTranslatef(5, 4, -25);
-//    glColor3f(0.0, 1.0, 0.0);
-//    glBindTexture(GL_TEXTURE_2D, bungatxt);
-//    semak();
-//    glBindTexture(GL_TEXTURE_2D, -1);
-//    glPopMatrix();
-//
-//    glPushMatrix();
-//    glTranslatef(5, 4.7, -25);
-//    glScalef(0.2, 0.2, 0.2);
-//    glColor3f(1.0, 0.0, 0.0);
-//    glBindTexture(GL_TEXTURE_2D, bintik);
-//    semak();
-//    glBindTexture(GL_TEXTURE_2D, -1);
-//    glPopMatrix();
-
-
-}
 void gerbangKiri(){
     //badan
     glPushMatrix();
     glTranslatef(42,2.5,-0.2);
     glScalef(2,3,2);
     glBindTexture(GL_TEXTURE_2D,gapurabawah);
-    cube(1);
+    cube(1,10);
     glBindTexture(GL_TEXTURE_2D,-1);
     //balok();
     glPopMatrix();
@@ -2486,7 +1637,7 @@ void gerbangKiri(){
     glTranslatef(42,0.5,0);
     glScalef(2.5,1,2.5);
     glBindTexture(GL_TEXTURE_2D, gapuraatas);
-    cube(1);
+    cube(1,10);
     glBindTexture(GL_TEXTURE_2D, -1);
     //balok();
     glPopMatrix();
@@ -2499,7 +1650,7 @@ void gerbangKiri(){
         glTranslatef(42,ty,tz);
         glScalef(sxz,0.5,sxz);
          glBindTexture(GL_TEXTURE_2D, gapuraatas);
-        cube(1);
+        cube(1,10);
          glBindTexture(GL_TEXTURE_2D, -1);
         //balok();
         glPopMatrix();
@@ -2515,7 +1666,7 @@ void gerbangKanan(){
     glTranslatef(58,2.5,-0.2);
     glScalef(2,3,2);
     glBindTexture(GL_TEXTURE_2D,gapurabawah);
-    cube(1);
+    cube(1,10);
     glBindTexture(GL_TEXTURE_2D,-1);
     //balok();
     glPopMatrix();
@@ -2525,7 +1676,7 @@ void gerbangKanan(){
     glTranslatef(58,0.5,0);
     glScalef(2.5,1,2.5);
     glBindTexture(GL_TEXTURE_2D, gapuraatas);
-    cube(1);
+    cube(1,10);
     glBindTexture(GL_TEXTURE_2D, -1);
     //balok();
     glPopMatrix();
@@ -2538,7 +1689,7 @@ void gerbangKanan(){
         glTranslatef(58,ty,tz);
         glScalef(sxz,0.5,sxz);
         glBindTexture(GL_TEXTURE_2D, gapuraatas);
-        cube(1);
+        cube(1,10);
          glBindTexture(GL_TEXTURE_2D, -1);
         //balok();
         glPopMatrix();
@@ -2549,7 +1700,7 @@ void gerbangKanan(){
     }
 }
 void trapesium(){
- glBegin(GL_POLYGON);
+ //glBegin(GL_POLYGON);
  glPushMatrix();
     //Sisi depan belakang
     GLfloat vertices[5][3]=
@@ -2610,19 +1761,19 @@ void trapesium(){
         {1.0, 4.0, -2.0}
     };
 
-    //1
+    //1 sisi kanan
     glBegin(GL_POLYGON);
         glNormal3fv(calculate_normal(vertices[0],vertices[1],vertices[2]));
         for(int x=0;x<5;x++){
-            glTexCoord2f(vertices[x][0], vertices[x][1]);
+            glTexCoord2f(vertices[x][2], vertices[x][1]);
             glVertex3fv(vertices[x]);
         }
     glEnd();
-    //2
+    //2 sisi kiri
     glBegin(GL_POLYGON);
         glNormal3fv(calculate_normal(vertices2[0],vertices2[1],vertices2[2]));
         for(int x=0;x<5;x++){
-            glTexCoord2f(vertices2[x][0], vertices2[x][1]);
+            glTexCoord2f(vertices2[x][2], vertices2[x][1]);
             glVertex3fv(vertices2[x]);
         }
     glEnd();
@@ -2672,7 +1823,7 @@ void trapesium(){
         }
     glEnd();
     glPopMatrix();
-    glEnd();
+    //glEnd();
 }
 void kuburan(){
 
@@ -2700,13 +1851,13 @@ void kuburanrotate()
 {
     glPushMatrix();
     glPushMatrix();
-    glTranslatef(5, 0, -15);
+    glTranslatef(5, -0.2, -15);
     glRotatef(90, 0.0, 1.0, 0.0);
     kuburan();
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(4.9, 0.5, -15.5);
+    glTranslatef(4.9, 0.3, -15.5);
     glRotatef(180, 0.0, 1.0, 0.0);
     glRotatef(-41, 1.0, 0.0, 0.0);
     glScalef(1, 0.5, 1.0);
@@ -2734,21 +1885,21 @@ void timba ()
     glPushMatrix();
     glTranslatef(5, 2.5, -5);
     glScalef(2.1, 0.1 ,0.1);
-    cube(1);
+    cube(1,10);
     glPopMatrix();
 
     glPushMatrix();
     glRotatef(90, 0.0, 0.0, 1.0 );
     glTranslatef(2, -4.01, -5);
     glScalef(1, 0.1 ,0.1);
-    cube(1);
+    cube(1,10);
     glPopMatrix();
 
     glPushMatrix();
     glRotatef(90, 0.0, 0.0, 1.0 );
     glTranslatef(2, -6.01, -5);
     glScalef(1, 0.1 ,0.1);
-    cube(1);
+    cube(1,10);
     glPopMatrix();
 }
 
@@ -2774,7 +1925,7 @@ void sumur()
     glTranslatef(-1.8, 2.0, -4.9);
     glScalef(0.6, 4.5 , 0.6);
     glBindTexture(GL_TEXTURE_2D, kuburantxt);
-    cube(1);
+    cube(1,10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
 
@@ -2782,12 +1933,12 @@ void sumur()
     glTranslatef(1.8, 2.0, -4.9);
     glScalef(0.6, 4.5 , 0.6);
     glBindTexture(GL_TEXTURE_2D, kuburantxt);
-    cube(1);
+    cube(1,10);
     glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
 
     glPushMatrix();
-    glTranslatef(-2, 1.0, -1.8);
+    glTranslatef(-2, 1.01, -1.8);
     glScalef(0.4,0.4,0.4);
     timba();
     glPopMatrix();
@@ -2798,7 +1949,7 @@ void alas(){
     //glTranslatef(50,-0.165,-50);
     //glScalef(100,0.335,100);
     glBindTexture(GL_TEXTURE_2D, tanah);
-    alaskubus(0, -0.165, 0, 100, 100, 0.1, 5);
+    alaskubus(-20, -0.4,20, 140, 140, 0.4, 5);
     glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
 }
@@ -2886,39 +2037,47 @@ void keranda(){
     glPopMatrix();
     //roda depan kiri
     glPushMatrix();
-    //setMaterialBlackRubber();
+    glColor3f(0,0,0);
     glTranslatef(6.3,0.11,-2.1);
     glTranslatef(85,0,-85);
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glRotatef(90, 0.0, 1.0, 0.0);
+    glBindTexture(GL_TEXTURE_2D, black);
 	glutSolidTorus(0.05,0.07,10,110);
+	glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //roda depan kanan
     glPushMatrix();
-    //setMaterialBlackRubber();
+    glColor3f(0,0,0);
     glTranslatef(7.7,0.11,-2.1);
     glTranslatef(85,0,-85);
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glRotatef(90, 0.0, 1.0, 0.0);
+    glBindTexture(GL_TEXTURE_2D, black);
 	glutSolidTorus(0.05,0.07,10,110);
+	glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //roda belakang kanan
     glPushMatrix();
-    //setMaterialBlackRubber();
+    glColor3f(0,0,0);
     glTranslatef(7.7,0.11,-5.4);
     glTranslatef(85,0,-85);
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glRotatef(90, 0.0, 1.0, 0.0);
+    glBindTexture(GL_TEXTURE_2D, black);
 	glutSolidTorus(0.05,0.07,10,110);
+	glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //roda belakang kiri
     glPushMatrix();
-    //setMaterialBlackRubber();
+    glColor3f(0,0,0);
     glTranslatef(6.3,0.11,-5.4);
     glTranslatef(85,0,-85);
     glTranslatef(0.0, 0.0, sin(theta*PI/180.0)*2.0);
     glRotatef(90, 0.0, 1.0, 0.0);
+    glBindTexture(GL_TEXTURE_2D, black);
 	glutSolidTorus(0.05,0.07,10,110);
+	glBindTexture(GL_TEXTURE_2D, -1);
     glPopMatrix();
     //ujung depan kiri
     glPushMatrix();
@@ -3185,6 +2344,38 @@ void psslampu()
     }
 }
 
+void rerumputan(){
+    for(int y=0;y<500;y++){
+    glPushMatrix();
+    glTranslatef(px[y],0,pz[y]);
+    glScalef(0.005,0.005,0.005);
+    tanaman(0,0,0,50);
+    glPopMatrix();
+    }
+}
+void rerumputan2(){
+    for(int y=0;y<500;y++){
+    glPushMatrix();
+    glTranslatef(px2[y],0,pz2[y]);
+    glScalef(0.005,0.005,0.005);
+    tanaman(0,0,0,50);
+    glPopMatrix();
+    }
+}
+
+void randomPosisiRumput(){
+    for(int x=0;x<500;x++){
+    px[x]=rand()%45+1;
+    pz[x]=(rand()%100)-100;
+    }
+}
+void randomPosisiRumput2(){
+    for(int x=0;x<500;x++){
+    px2[x]=rand()%45+55;
+    pz2[x]=(rand()%100)-100;
+    }
+}
+
 void display(void){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
@@ -3193,7 +2384,17 @@ void display(void){
     camera->Update();
 
     setLighting();
-    posisiLampu(cahayax,cahayay,cahayaz);
+    //posisiLampu(cahayax,cahayay,cahayaz);
+
+    glPushMatrix();
+    psslampu();
+    glPopMatrix();
+
+    glPushMatrix();
+    rerumputan();
+    rerumputan2();
+    glPopMatrix();
+
 
 
     glPushMatrix();
@@ -3204,13 +2405,7 @@ void display(void){
     keranda();
     glPopMatrix();
 
-    if((camera->pos.x>87) && (camera->pos.z < -87)){
-    glPushMatrix();
-    glTranslatef(90,0,-87);
-    glRotatef(180,0,1,0);
-    pocong();
-    glPopMatrix();
-    }
+
 
     //setmaterialPerl();
 
@@ -3227,11 +2422,6 @@ void display(void){
     //setMaterialTin();
     rumahKeranda();
     glPopMatrix();
-
-//    glPushMatrix();
-//    glColor3f(0.0, 1.0, 0.0);
-//    bunga();
-//    glPopMatrix();
 
     glPushMatrix();
     glTranslatef(0,0,0);
@@ -3313,11 +2503,15 @@ void display(void){
     gerbangKanan();
     glPopMatrix();
 
+
+
+    if((camera->pos.x>87) && (camera->pos.z < -87)){
     glPushMatrix();
-    psslampu();
+    glTranslatef(90,0,-87);
+    glRotatef(180,0,1,0);
+    pocong();
     glPopMatrix();
-
-
+    }
 
     // Flush buffers to screen
 
@@ -3351,12 +2545,14 @@ int main(int argc, char **argv){
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
     glutInitWindowSize(1366,768);
     glutCreateWindow("Tugas Shading");
-    camera = new Camera( 0.0, 2.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0 );
+    camera = new Camera( 50.0, 2.7, 20.0, 50.0, 2.7, -50.0, 0.0, 1.0, 0.0 );
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_NORMALIZE);
     glEnable(GL_AUTO_NORMAL);
-    glClearColor (0.0, 0.0, 0.0, 1.0);
+    glClearColor(0.4, 0.9, 1.0, 1.0);
 
+    randomPosisiRumput();
+    randomPosisiRumput2();
     //texture
 	glEnable(GL_TEXTURE_2D);
 
@@ -3383,6 +2579,7 @@ int main(int argc, char **argv){
 	air = loadBmpFile("air.bmp");
 	black = loadBmpFile("black.bmp");
 	rust = loadBmpFile("rust.bmp");
+	green = loadBmpFile("green.bmp");
 
     glutDisplayFunc(display);
     glutReshapeFunc(reshape);
